@@ -9,11 +9,11 @@ import androidx.compose.ui.unit.sp
 import com.example.letgo.R
 
 val Montserrat = FontFamily(
-    Font(R.font.Montserrat)
+    Font(R.font.montserrat)
 )
 
 val Poppins = FontFamily(
-    Font(R.font.Poppins)
+    Font(R.font.poppins)
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -26,6 +26,11 @@ val Typography = Typography(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
+    ),
+    h1 = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.W700,
+        fontSize = 32.sp
     )
     /* Other default text styles to override
     button = TextStyle(

@@ -13,13 +13,16 @@ fun MainScreen() {
 
     NavHost(navController = navController, startDestination = Routes.Login.route) {
 
-
         composable(Routes.Login.route) {
             Login(navController = navController)
         }
 
         composable(Routes.Register.route) {
             Register(navController = navController)
+        }
+
+        composable(Routes.HomePage.route) {
+            HomePage(navController = navController)
         }
     }
 }

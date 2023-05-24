@@ -29,10 +29,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.letgo.R
 import com.example.letgo.nav.Routes
 import com.example.letgo.ui.theme.Typography
+import com.example.letgo.viewModel.LoginViewModel
 import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomDialogClose
 import com.example.letgo.widgets.CustomHeader
@@ -41,7 +43,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun Login( navController: NavHostController ){
+fun Login( navController: NavHostController, vm:LoginViewModel = viewModel() ){
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -112,17 +114,17 @@ fun Login( navController: NavHostController ){
             btnText = "Login",
             btnColor = MaterialTheme.colorScheme.tertiary,
             onClickFun = {
-//                scope.launch {
-//                    isLoading = true
-//                    val data = vm.logInWithEmail()
-//
-//                    if(data!= null) {
-//                        navController.navigate(Routes.HomePage.route)
-//                    } else {
-//                        showLoginError = true
-//                    }
-//                    isLoading = false
-//                }
+                scope.launch {
+                    isLoading = true
+                    val data = vm.logIn(email.value, password.value)
+
+                    if(data!= null) {
+                        navController.navigate(Routes.HomePage.route)
+                    } else {
+                        showLoginError = true
+                    }
+                    isLoading = false
+                }
             }
 
         )
@@ -157,8 +159,8 @@ fun Login( navController: NavHostController ){
 
         if (showLoginError) {
             CustomDialogClose(
-                alertTitle = "Error",
-                alertBody = "Error",
+                alertTitle = "Login Error",
+                alertBody = "Incorrect email address or password !",
                 onDismissFun = { showLoginError = false },
                 btnCloseClick = { showLoginError = false }
             )

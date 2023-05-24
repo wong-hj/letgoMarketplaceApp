@@ -81,12 +81,14 @@ fun CustomOutlinedTextField(
             keyboardOptions = keyboardOptions,
         )
         if(showError) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                //style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 8.dp).offset(y = (-10).dp).align(Alignment.CenterHorizontally)
-            )
+
+//            Text(
+//                text = errorMessage,
+//                color = MaterialTheme.colorScheme.error,
+//                //style = MaterialTheme.typography.caption,
+//                modifier = Modifier.offset(y = (5).dp).align(Alignment.Start)
+//            )
+
         }
     }
 

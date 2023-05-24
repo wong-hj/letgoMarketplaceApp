@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import com.example.letgo.ui.theme.LetgoTheme
+import com.example.letgo.screens.Login
 
 
 class MainActivity : ComponentActivity() {
@@ -31,56 +32,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    Login()
                 }
             }
         }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreen() {
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Home", "Settings", "Favorites")
-    val icons = listOf(
-        Icons.Filled.Home, Icons.Filled.Settings,
-        Icons.Filled.Favorite)
+//@Composable
 
-    Column(
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        SmallTopAppBar(title = { Text("ThemeDemo", color = MaterialTheme.colorScheme.primary) }, scrollBehavior = null)
-
-        Button(onClick = { },
-        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)) {
-            Text("MD3 Button", color = MaterialTheme.colorScheme.background)
-        }
-
-        Text("A Theme Demo")
-
-        FloatingActionButton(onClick = { }) {
-            Text("FAB")
-        }
-
-        NavigationBar {
-            items.forEachIndexed { index, item ->
-                NavigationBarItem(
-                    icon = { Icon(icons[index], contentDescription = null) },
-                    label = { Text(item) },
-                    selected = selectedItem == index,
-                    onClick = { selectedItem = index }
-                )
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
     LetgoTheme {
-        MainScreen()
+        Login()
     }
 }

@@ -47,7 +47,7 @@ fun CustomOutlinedTextField(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChangeFun,
-            modifier = Modifier.padding(bottom = 10.dp),
+            //modifier = Modifier.padding(bottom = 10.dp),
             label = { Text(text = labelText, style = Typography.body2) },
             singleLine = true,
             leadingIcon = {
@@ -60,15 +60,13 @@ fun CustomOutlinedTextField(
             isError = showError,
             trailingIcon = {
                 if (showError && !isPasswordField) Icon(imageVector = Icons.Filled.Error, contentDescription = "Error")
-                //stringResource(
-                    //id = R.string.error_icon)
-                //)
+
 
                 if(isPasswordField){
                     IconButton(onClick = { onVisibilityChange(!isPasswordVisible) }) {
                         Icon(
                             imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = "HI"
+                            contentDescription = "Password_Visible"
                             //stringResource(R.string.password_hint )
                         )
 

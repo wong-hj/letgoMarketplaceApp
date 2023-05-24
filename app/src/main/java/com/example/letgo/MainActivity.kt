@@ -20,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import com.example.letgo.ui.theme.LetgoTheme
 import com.example.letgo.screens.Login
+import com.example.letgo.screens.Register
+import com.example.letgo.screens.MainScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -32,7 +34,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Login()
+                    //Login()
+                    //Register()
+                    MainScreen()
                 }
             }
         }
@@ -46,6 +50,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     LetgoTheme {
-        Login()
+        //Login()
+        //Register()
+        MainScreen()
     }
 }

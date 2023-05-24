@@ -20,16 +20,16 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 15.sp
     ),
     body2 = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 15.sp
     ),
     h1 = TextStyle(
         fontFamily = Montserrat,
-        fontWeight = FontWeight.W700,
+        fontWeight = FontWeight.W900,
         fontSize = 32.sp
     )
     /* Other default text styles to override

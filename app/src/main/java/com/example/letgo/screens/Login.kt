@@ -29,7 +29,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.letgo.R
+import com.example.letgo.nav.Routes
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomDialogClose
@@ -39,14 +41,12 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun Login(){
+fun Login( navController: NavHostController ){
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
-
-
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -144,7 +144,7 @@ fun Login(){
                 text = AnnotatedString("Register Here."),
                 //modifier = Modifier.padding(20.dp),
                 onClick = {
-                    //navController.navigate(Routes.UserRegistration.route)
+                    navController.navigate(Routes.Register.route)
                 },
                 style = TextStyle(
                     fontSize = 14.sp,

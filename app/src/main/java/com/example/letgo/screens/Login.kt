@@ -3,10 +3,12 @@ package com.example.letgo.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 //import androidx.compose.foundation.layout.ColumnScopeInstance.align
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Email
@@ -33,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.letgo.R
 import com.example.letgo.nav.Routes
+import com.example.letgo.rememberImeState
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.LoginViewModel
 import com.example.letgo.widgets.CustomButton
@@ -49,11 +52,18 @@ fun Login( navController: NavHostController, vm:LoginViewModel = viewModel() ){
     val password = remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
+    val imeState = rememberImeState()
+    val scrollState = rememberScrollState()
 
+    LaunchedEffect(key1 = imeState.value) {
+        if (imeState.value) {
+            scrollState.scrollTo(scrollState.maxValue)
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         //verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
     ) {
 
         Spacer(modifier = Modifier.height(20.dp))

@@ -5,9 +5,11 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.letgo.R
 import com.example.letgo.nav.Routes
+import com.example.letgo.rememberImeState
 import com.example.letgo.viewModel.RegisterViewModel
 import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomHeader
@@ -59,6 +62,15 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    val imeState = rememberImeState()
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = imeState.value) {
+        if (imeState.value) {
+            scrollState.scrollTo(scrollState.maxValue)
+        }
+    }
+
     fun validateData(): Boolean {
 
         validateEmail = Patterns.EMAIL_ADDRESS.matcher(email.value).matches()
@@ -74,7 +86,7 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         //verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
     ) {
 
         Column(

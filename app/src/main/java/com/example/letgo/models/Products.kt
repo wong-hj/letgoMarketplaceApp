@@ -7,6 +7,6 @@ data class Products(
     var brand: String = "",
     var quality: String = "",
     var location: String = "",
-    var price: Double = 0.0,
+    var price: Int = 0,
     var imageURL: String = ""
 )

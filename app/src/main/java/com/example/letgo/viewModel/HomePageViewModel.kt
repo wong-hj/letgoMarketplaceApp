@@ -21,6 +21,9 @@ class HomePageViewModel : ViewModel() {
     private val _products = MutableLiveData<List<Products>>()
     val products: LiveData<List<Products>> = _products
 
+    private val _searchProducts = MutableLiveData<List<Products>>()
+    val searchProducts: LiveData<List<Products>> = _searchProducts
+
     init {
         getProductData()
     }
@@ -43,5 +46,39 @@ class HomePageViewModel : ViewModel() {
 
             return emptyList()
         }
+    }
+
+    suspend fun getSearchProducts(query: String?): List<Products> {
+        val db = FirebaseFirestore.getInstance()
+
+        try {
+            val querySnapshot = db.collection("Products")
+                .orderBy("name")
+                .startAt(query)
+                .endAt(query + '\uf8ff')
+                .get().await()
+
+
+            return querySnapshot.toObjects<Products>()
+
+        } catch (e: FirebaseFirestoreException) {
+            Log.d("Firebase", "Error getting documents: ", e)
+
+            return emptyList()
+        }
+    }
+
+    fun performSearch(query: String?) {
+
+
+        viewModelScope.launch {
+
+            _searchProducts.value = getSearchProducts(query)
+
+        }
+    }
+
+    fun clearSearchResults() {
+        _searchProducts.value = emptyList()
     }
 }

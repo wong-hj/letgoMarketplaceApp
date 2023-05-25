@@ -41,7 +41,6 @@ import androidx.lifecycle.viewModelScope
 @Composable
 fun HomePage(navController: NavHostController, productVM: HomePageViewModel = viewModel()) {
 
-
     val products: List<Products> by productVM.products.observeAsState(emptyList())
 
     var searchText by remember { mutableStateOf("") }
@@ -49,6 +48,7 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
     val searchProducts: List<Products> by productVM.searchProducts.observeAsState(emptyList())
 
     var isSearching by remember { mutableStateOf(false) }
+
     Scaffold(
 
         content = {
@@ -65,12 +65,9 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                     onSearch = {
                         active = false
 
-
                         productVM.performSearch(searchText)
 
                         isSearching = true
-
-
                     },
                     active = active,
                     onActiveChange = {
@@ -168,10 +165,6 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
             CustomBottomBar(navController = navController)
         }
     )
-
-        //}
-
-    //)
 
 
 }

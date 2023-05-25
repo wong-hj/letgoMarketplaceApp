@@ -89,17 +89,11 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
         modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
     ) {
 
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .padding(40.dp)
-                .fillMaxWidth()
-                .align(Alignment.Start)
-        ) {
-            CustomHeader(
-                value = "Register"
-            )
-        }
+
+        CustomHeader(
+            value = "Register"
+        )
+
 
         CustomOutlinedTextField(
             value = email.value,

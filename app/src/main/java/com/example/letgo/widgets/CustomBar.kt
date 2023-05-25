@@ -43,7 +43,8 @@ fun CustomTopBar(navController: NavHostController, title: String, showBackIcon :
 fun CustomBottomBar(navController: NavController) {
     val items = listOf(
         BottomBar.Home,
-        BottomBar.Login
+        BottomBar.Liked,
+        BottomBar.Profile
     )
     BottomNavigation(
 

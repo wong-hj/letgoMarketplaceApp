@@ -77,17 +77,11 @@ fun Login( navController: NavHostController, vm:LoginViewModel = viewModel() ){
                 .size(200.dp)
                 .clip(RoundedCornerShape(100.dp))
         )
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .padding(40.dp)
-                .fillMaxWidth()
-                .align(Alignment.Start)
-        ) {
-            CustomHeader(
-                value = "Login"
-            )
-        }
+
+        CustomHeader(
+            value = "Login"
+        )
+
 
         CustomOutlinedTextField(
             value = email.value,

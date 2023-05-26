@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -35,14 +38,15 @@ import com.example.letgo.viewModel.HomePageViewModel
 import com.example.letgo.widgets.CustomBottomBar
 import com.example.letgo.widgets.CustomHeader
 import androidx.lifecycle.viewModelScope
+import com.example.letgo.viewModel.LikedViewModel
+import com.example.letgo.viewModel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomePage(navController: NavHostController, productVM: HomePageViewModel = viewModel()) {
+fun HomePage(navController: NavHostController, productVM: HomePageViewModel = viewModel(), userVM: UserViewModel = viewModel()) {
 
     val products: List<Products> by productVM.products.observeAsState(emptyList())
-
     var searchText by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val searchProducts: List<Products> by productVM.searchProducts.observeAsState(emptyList())
@@ -104,8 +108,6 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -116,12 +118,14 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                 ) {
 
                     items(if (isSearching) searchProducts else products) { product ->
+
                         Card(
                             onClick = { /* Do something */ },
                             modifier = Modifier
                                 .size(width = 180.dp, height = 200.dp)
                                 .align(Alignment.CenterHorizontally)
                         ) {
+
 
                             AsyncImage(
                                 model = product.imageURL,
@@ -131,6 +135,8 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                                     .fillMaxWidth()
                                     .height(140.dp)
                             )
+
+
 
                             val text = buildAnnotatedString {
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -152,6 +158,7 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
 
                                 )
                             }
+
                         }
                     }
                 }
@@ -168,5 +175,6 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
 
 
 }
+
 
 

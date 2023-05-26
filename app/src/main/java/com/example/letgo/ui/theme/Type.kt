@@ -27,10 +27,20 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp
     ),
+    subtitle1 = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Light,
+        fontSize = 16.sp
+    ),
     h1 = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp
+    ),
+    h3 = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp
     ),
     h6 = TextStyle(
         fontFamily = Montserrat,

@@ -1,6 +1,7 @@
 package com.example.letgo.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -72,6 +73,7 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                         productVM.performSearch(searchText)
 
                         isSearching = true
+
                     },
                     active = active,
                     onActiveChange = {
@@ -116,47 +118,75 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                         .align(Alignment.CenterHorizontally)
                         .padding(start = 20.dp, end = 20.dp, bottom = 70.dp),
                 ) {
+                    val displayedProducts = if (isSearching) searchProducts else products
+                    if (isSearching && displayedProducts.isEmpty()) {
+                        item {
 
-                    items(if (isSearching) searchProducts else products) { product ->
-
-                        Card(
-                            onClick = { /* Do something */ },
-                            modifier = Modifier
-                                .size(width = 180.dp, height = 200.dp)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-
-
-                            AsyncImage(
-                                model = product.imageURL,
-                                contentDescription = null,
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(140.dp)
+                            Text(
+                                text = "No Result Found.",
+                                style = Typography.body2
                             )
 
+                        }
+                    } else {
+                        items(displayedProducts) { product ->
 
-
-                            val text = buildAnnotatedString {
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(product.name)
+                            if (isSearching && searchProducts.isEmpty()) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                ) {
+                                    Text(
+                                        text = "No Result Found.",
+                                        modifier = Modifier.align(Alignment.Center),
+                                        textAlign = TextAlign.Center,
+                                        style = Typography.body2
+                                    )
                                 }
-                                append("\nRM ${product.price} | ${product.quality}")
-                            }
 
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = text,
-                                    modifier = Modifier.align(Alignment.Center),
-                                    textAlign = TextAlign.Center,
-                                    style = Typography.body2
+                            } else {
+                                Card(
+                                    onClick = { /* Do something */ },
+                                    modifier = Modifier
+                                        .size(width = 180.dp, height = 200.dp)
+                                        .align(Alignment.CenterHorizontally)
+                                ) {
 
-                                )
+
+                                    AsyncImage(
+                                        model = product.imageURL,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.FillWidth,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(140.dp)
+                                    )
+
+
+                                    val text = buildAnnotatedString {
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                            append(product.name)
+                                        }
+                                        append("\nRM ${product.price} | ${product.quality}")
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = text,
+                                            modifier = Modifier.align(Alignment.Center),
+                                            textAlign = TextAlign.Center,
+                                            style = Typography.body2
+
+                                        )
+                                    }
+
+                                }
                             }
 
                         }

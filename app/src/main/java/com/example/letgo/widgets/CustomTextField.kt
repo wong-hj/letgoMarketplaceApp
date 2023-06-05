@@ -1,5 +1,6 @@
 package com.example.letgo.widgets
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +25,6 @@ import com.example.letgo.ui.theme.Typography
 import kotlin.text.Typography
 
 @Composable
-
 fun CustomOutlinedTextField(
     value: String,
     onValueChangeFun: (String) -> Unit,
@@ -32,7 +32,7 @@ fun CustomOutlinedTextField(
     isPasswordField: Boolean = false,
     isPasswordVisible: Boolean = false,
     onVisibilityChange: (Boolean) -> Unit = {},
-    leadingIconImageVector: ImageVector,
+    leadingIconImageVector: ImageVector? = null,
     leadingIconDescription: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     showError: Boolean = false,
@@ -44,19 +44,24 @@ fun CustomOutlinedTextField(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val leadingIcon: (@Composable () -> Unit)? = if (leadingIconImageVector != null) {
+            {
+                Icon(
+                    imageVector = leadingIconImageVector,
+                    contentDescription = leadingIconDescription
+                )
+            }
+        } else {
+            null
+        }
         OutlinedTextField(
             value = value,
             onValueChange = onValueChangeFun,
             //modifier = Modifier.padding(bottom = 10.dp),
+            //modifier = Modifier.padding(start = if (leadingIconImageVector != null) 0.dp else 12.dp),
             label = { Text(text = labelText, style = Typography.body2) },
             singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = leadingIconImageVector,
-                    contentDescription = leadingIconDescription,
-                    tint = if (showError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
-                )
-            },
+            leadingIcon = leadingIcon,
             isError = showError,
             trailingIcon = {
                 if (showError && !isPasswordField) Icon(imageVector = Icons.Filled.Error, contentDescription = "Error")
@@ -112,3 +117,27 @@ fun CustomHeader(
     }
 
 }
+
+@Composable
+fun CustomTextArea(
+    value: String,
+    onValueChangeFun: (String) -> Unit,
+    labelText: String,
+    errorMessage: String = ""
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChangeFun,
+            label = { Text(text = labelText, style = Typography.body2) },
+            modifier = Modifier
+                .height(100.dp)
+        )
+    }
+
+}
+

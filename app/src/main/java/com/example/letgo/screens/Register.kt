@@ -145,7 +145,6 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
             onValueChangeFun = {fullName.value = it},
             labelText = "Full Name",
             showError = !validateName,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             leadingIconImageVector = Icons.Default.Person
         )
 
@@ -156,7 +155,6 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
             onValueChangeFun = {university.value = it},
             labelText = "Tertiary Study",
             showError = !validateUniversity,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             leadingIconImageVector = Icons.Default.School
         )
 
@@ -167,7 +165,6 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
             onValueChangeFun = {studentID.value = it},
             labelText = "Student ID",
             showError = !validateStudentID,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             leadingIconImageVector = Icons.Default.Badge
         )
 

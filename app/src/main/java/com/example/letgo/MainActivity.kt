@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.example.letgo.screens.AddProduct
 import com.example.letgo.ui.theme.LetgoTheme
 import com.example.letgo.screens.MainScreen
 
@@ -24,9 +25,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    AddProduct()
                     //Login()
                     //Register()
-                    MainScreen()
+                    //MainScreen()
                 }
             }
         }
@@ -42,6 +44,7 @@ fun DefaultPreview() {
     LetgoTheme {
         //Login()
         //Register()
-        MainScreen()
+        AddProduct()
+        //MainScreen()
     }
 }

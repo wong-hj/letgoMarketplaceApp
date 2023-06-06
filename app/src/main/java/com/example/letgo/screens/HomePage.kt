@@ -50,7 +50,6 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
 
-
     val products: List<Products> by productVM.products.observeAsState(emptyList())
     var searchText by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }

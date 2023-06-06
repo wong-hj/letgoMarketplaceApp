@@ -128,7 +128,9 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
 
                             items(userListings) { product ->
                                 Card(
-                                    onClick = { /* Do something */ },
+                                    onClick = { navController.navigate(
+                                        route = Routes.EditProduct.route + "/${product.productID}"
+                                    ) },
                                     modifier = Modifier
                                         .size(width = 180.dp, height = 200.dp)
                                 ) {

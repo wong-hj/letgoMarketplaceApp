@@ -1,9 +1,7 @@
 package com.example.letgo.screens
 
-import android.graphics.Paint
-import android.hardware.camera2.params.BlackLevelPattern
 import android.net.Uri
-import android.util.Patterns
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -11,19 +9,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -33,43 +24,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontVariation.width
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.letgo.models.Products
-import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
 import com.example.letgo.ui.theme.Typography
-import com.example.letgo.viewModel.AddProductViewModel
+import com.example.letgo.viewModel.EditProductViewModel
 import com.example.letgo.viewModel.HomePageViewModel
-import com.example.letgo.viewModel.LikedViewModel
-import com.example.letgo.viewModel.LoginViewModel
-import com.example.letgo.widgets.*
+import com.example.letgo.widgets.CustomButton
+import com.example.letgo.widgets.CustomOutlinedTextField
+import com.example.letgo.widgets.CustomTextArea
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
+fun EditProduct(navController: NavHostController, vm: EditProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
+    val arguments = navController.currentBackStackEntry?.arguments
+    val documentId = arguments?.getString("productID")
+
+    val product by vm.getProduct(documentId.toString()).observeAsState()
+    val openDialog = remember { mutableStateOf(false)  }
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var brand by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
+    Log.d("TESTING ONLY", product?.name ?: "")
+    var name by remember { mutableStateOf(product?.name ?: "") }
+    Log.d("TESTING ONLYYY", name)
+    var description by remember { mutableStateOf(product?.description ?: "") }
+    var brand by remember { mutableStateOf(product?.brand ?: "") }
+    var location by remember { mutableStateOf(product?.location ?: "") }
+    var price by remember { mutableStateOf(product?.location ?: "") }
+
 
     //validation
     var validateName by rememberSaveable { mutableStateOf(true) }
@@ -83,7 +71,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
     //dropdown
     val qualityOptions = listOf("Brand New", "Like New", "Light Used", "Heavy Used")
     //val defaultQuality = "Quality"
-    var selectedQuality by remember { mutableStateOf(qualityOptions[0]) }
+    var selectedQuality by remember { mutableStateOf(product?.quality ?: qualityOptions[0]) }
     var expanded by remember { mutableStateOf(false) }
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
@@ -129,16 +117,73 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
                 tint = Color.Black
             )
         }
-        Column(
-            horizontalAlignment = Alignment.Start,
+
+        Row(
             modifier = Modifier
-                .padding(top = 10.dp, start = 40.dp, bottom = 20.dp)
-                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 10.dp, start = 40.dp, end = 20.dp, bottom = 20.dp)
         ) {
+
             Text(
-                text = "Become a Seller!",
+                text = "Edit Listing",
                 color = Color.Black,
                 style = Typography.h1,
+                modifier = Modifier.weight(1f)
+            )
+
+
+            IconButton(
+                onClick = {
+                    openDialog.value = true
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Add",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+
+        if (openDialog.value) {
+
+            AlertDialog(
+                onDismissRequest = {
+                    // Dismiss the dialog when the user clicks outside the dialog or on the back
+                    // button. If you want to disable that functionality, simply use an empty
+                    // onCloseRequest.
+                    openDialog.value = false
+                },
+                title = {
+                    Text(text = "Delete Listing")
+                },
+                text = {
+                    Text("Confirm Delete?")
+                },
+                confirmButton = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        onClick = {
+
+
+                            product?.let { vm.deleteProduct(it.productID, it.name) }
+                            openDialog.value = false
+                            navController.navigateUp()
+
+                        }) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(
+
+                        onClick = {
+                            openDialog.value = false
+                        }) {
+                        Text("Cancel")
+                    }
+                }
             )
         }
 
@@ -147,7 +192,13 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
         Box(
             modifier = Modifier
                 .size(width = 280.dp, height = 250.dp)
-                .border(width = 1.dp, color = if(validateImage) { Color.LightGray } else { MaterialTheme.colorScheme.error }, shape = RoundedCornerShape(3.dp))
+                .border(
+                    width = 1.dp, color = if (validateImage) {
+                        Color.LightGray
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    }, shape = RoundedCornerShape(3.dp)
+                )
                 .align(Alignment.CenterHorizontally)
                 .clickable {
 
@@ -157,33 +208,20 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
 
                 }
         ) {
-            if (selectedImageUri != null) {
-                AsyncImage(
-                    model = selectedImageUri!!,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(width = 280.dp, height = 250.dp)
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Image,
-                    contentDescription = "Clickable Image",
-                    tint = Color.DarkGray,
-                    modifier = Modifier.size(32.dp).align(Alignment.Center)
-                )
 
+            AsyncImage(
+                model = if(selectedImageUri != null) {selectedImageUri} else {product?.imageURL},
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(width = 280.dp, height = 250.dp)
+            )
 
-                Text(
-                    text = "Click to Insert Picture",
-                    style = Typography.body2,
-                    modifier = Modifier.align(Alignment.Center).padding(top = 60.dp)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
+
 
         CustomOutlinedTextField(
             value = name,
@@ -192,7 +230,9 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
             showError = !validateName,
         )
 
+
         Spacer(modifier = Modifier.height(20.dp))
+
 
         CustomTextArea(
             value = description,
@@ -201,7 +241,9 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
             showError = !validateDesc
         )
 
+
         Spacer(modifier = Modifier.height(20.dp))
+
 
         CustomOutlinedTextField(
             value = brand,
@@ -209,6 +251,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
             labelText = "Brand",
             showError = !validateBrand,
         )
+
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -219,9 +262,10 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
             onExpandedChange = { expanded = it }
         ) {
 
+
             OutlinedTextField(
                 value = selectedQuality,
-                onValueChange = {},
+                onValueChange = { selectedQuality = it},
                 readOnly = true,
                 label = { Text(text = "Quality", style = Typography.body2) },
                 trailingIcon = {
@@ -231,6 +275,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
                     .menuAnchor()
 
             )
+
 
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -251,6 +296,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
 
         Spacer(modifier = Modifier.height(20.dp))
 
+
         CustomOutlinedTextField(
             value = location,
             onValueChangeFun = {location = it},
@@ -258,14 +304,17 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
             showError = !validateLocation,
         )
 
+
         Spacer(modifier = Modifier.height(20.dp))
 
+
         CustomOutlinedTextField(
-            value = price,
+            value = price.toString(),
             onValueChangeFun = {price = it},
             labelText = "Price",
             showError = !validatePrice,
         )
+
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -276,22 +325,34 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
         ) {
             CustomButton(
 
-                btnText = "Create",
+                btnText = "Update",
                 btnColor = MaterialTheme.colorScheme.tertiary,
                 onClickFun = {
                     scope.launch {
                         if(validateData()) {
                             isLoading = true
 
-                            vm.addProduct(
-                                selectedImageUri!!,
-                                name,
-                                description,
-                                brand,
-                                selectedQuality,
-                                location,
-                                price
-                            )
+                            product?.let {
+//                                vm.updateProduct(
+//                                    selectedImageUri!!,
+//                                    name,
+//                                    description,
+//                                    brand,
+//                                    selectedQuality,
+//                                    location,
+//                                    price,
+//                                    it.productID
+//                                )
+
+                                Log.d("TESTING", selectedImageUri!!.toString() +
+                                    name +
+                                    description +
+                                    brand +
+                                    selectedQuality +
+                                    location +
+                                    price +
+                                    it.productID)
+                            }
 
                             navController.navigateUp()
 
@@ -310,5 +371,4 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
         Spacer(modifier = Modifier.height(20.dp))
 
     }
-
 }

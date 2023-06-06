@@ -10,15 +10,15 @@ import com.google.firebase.storage.FirebaseStorage
 class AddProductViewModel : ViewModel() {
 
     fun addProduct(image: Uri, name: String, description: String, brand: String, quality: String, location: String, price: String) {
-        Log.d("TEST","1")
+
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference.child("images/$name.jpg")
-        Log.d("TEST","2")
+
         val uploadTask = storageRef.putFile(image)
-        Log.d("TEST","3")
+
         uploadTask.addOnSuccessListener {
             // Image upload successful
-            Log.d("TEST","4")
+
             storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                 val imageUrl = downloadUrl.toString()
                 val db = FirebaseFirestore.getInstance()

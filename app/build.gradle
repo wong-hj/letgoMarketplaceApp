@@ -74,13 +74,15 @@ dependencies {
 
     //FireAuth
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:32.0.0')
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
     // Add the dependency for the Firebase Authentication library
     implementation 'com.google.firebase:firebase-auth-ktx'
 
     //FireStore
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
+    //Firebase Storage
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
 }
 

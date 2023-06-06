@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.hardware.camera2.params.BlackLevelPattern
 import android.net.Uri
 import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontVariation.width
@@ -40,7 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.letgo.models.Products
@@ -48,6 +52,7 @@ import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.AddProductViewModel
+import com.example.letgo.viewModel.HomePageViewModel
 import com.example.letgo.viewModel.LikedViewModel
 import com.example.letgo.viewModel.LoginViewModel
 import com.example.letgo.widgets.*
@@ -55,9 +60,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct(vm: AddProductViewModel = viewModel()) {
+fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
 
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
 
     var name by remember { mutableStateOf("") }
@@ -80,18 +86,6 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
     //val defaultQuality = "Quality"
     var selectedQuality by remember { mutableStateOf(qualityOptions[0]) }
     var expanded by remember { mutableStateOf(false) }
-    //add back button here
-//    TopAppBar(
-//        title = { Text(text = "Be a Seller") },
-//        navigationIcon = {
-//            IconButton(onClick = { /* Handle back button click */ }) {
-//                Icon(
-//                    imageVector = Icons.Default.ArrowBack,
-//                    contentDescription = "Back"
-//                )
-//            }
-//        }
-//    )
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
 
@@ -127,14 +121,34 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .verticalScroll(scrollState)) {
-        CustomHeader(value = "Be a Seller.")
+        IconButton(
+            onClick = { navController.navigateUp() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.Black
+            )
+        }
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .padding(top = 10.dp, start = 40.dp, bottom = 20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Become a Seller!",
+                color = Color.Black,
+                style = Typography.h1,
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Box(
             modifier = Modifier
                 .size(width = 280.dp, height = 250.dp)
-                .border(width = 2.dp, color = Color.LightGray)
+                .border(width = 1.dp, color = if(validateImage) { Color.LightGray } else { MaterialTheme.colorScheme.error }, shape = RoundedCornerShape(3.dp))
                 .align(Alignment.CenterHorizontally)
                 .clickable {
 
@@ -175,7 +189,8 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
         CustomOutlinedTextField(
             value = name,
             onValueChangeFun = {name = it},
-            labelText = "Product Name"
+            labelText = "Product Name",
+            showError = !validateName,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -183,14 +198,17 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
         CustomTextArea(
             value = description,
             onValueChangeFun = {description = it},
-            labelText = "Description")
+            labelText = "Description",
+            showError = !validateDesc
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         CustomOutlinedTextField(
             value = brand,
             onValueChangeFun = {brand = it},
-            labelText = "Brand"
+            labelText = "Brand",
+            showError = !validateBrand,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -237,7 +255,8 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
         CustomOutlinedTextField(
             value = location,
             onValueChangeFun = {location = it},
-            labelText = "Meetup Location"
+            labelText = "Meetup Location",
+            showError = !validateLocation,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -245,7 +264,8 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
         CustomOutlinedTextField(
             value = price,
             onValueChangeFun = {price = it},
-            labelText = "Price"
+            labelText = "Price",
+            showError = !validatePrice,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -260,23 +280,29 @@ fun AddProduct(vm: AddProductViewModel = viewModel()) {
                 btnText = "Create",
                 btnColor = MaterialTheme.colorScheme.tertiary,
                 onClickFun = {
-                scope.launch {
-                    if(validateData()) {
-                        isLoading = true
+                    scope.launch {
+                        if(validateData()) {
+                            isLoading = true
 
-                        vm.addProduct(
-                            selectedImageUri!!,
-                            name,
-                            description,
-                            brand,
-                            selectedQuality,
-                            location,
-                            price
-                        )
+                            vm.addProduct(
+                                selectedImageUri!!,
+                                name,
+                                description,
+                                brand,
+                                selectedQuality,
+                                location,
+                                price
+                            )
+
+                            navController.navigateUp()
+
+
+                        } else {
+                            Toast.makeText(context, "Please Fill in all valid Fields.", Toast.LENGTH_SHORT).show()
+                        }
 
                         isLoading = false
                     }
-                }
                 }
 
             )

@@ -64,8 +64,7 @@ fun CustomOutlinedTextField(
             leadingIcon = leadingIcon,
             isError = showError,
             trailingIcon = {
-                if (showError && !isPasswordField) Icon(imageVector = Icons.Filled.Error, contentDescription = "Error")
-
+                if (showError && !isPasswordField) Icon(imageVector = Icons.Filled.Error, contentDescription = "Error", tint = Color.LightGray)
 
                 if(isPasswordField){
                     IconButton(onClick = { onVisibilityChange(!isPasswordVisible) }) {
@@ -123,6 +122,7 @@ fun CustomTextArea(
     value: String,
     onValueChangeFun: (String) -> Unit,
     labelText: String,
+    showError: Boolean = false,
     errorMessage: String = ""
 ) {
     Column(
@@ -134,6 +134,7 @@ fun CustomTextArea(
             value = value,
             onValueChange = onValueChangeFun,
             label = { Text(text = labelText, style = Typography.body2) },
+            isError = showError,
             modifier = Modifier
                 .height(100.dp)
         )

@@ -28,8 +28,13 @@ fun MainScreen() {
         composable(Routes.Profile.route) {
             Profile(navController = navController)
         }
+
         composable(Routes.Liked.route) {
             Liked(navController = navController)
+        }
+
+        composable(Routes.AddProduct.route) {
+            AddProduct(navController = navController)
         }
     }
 }

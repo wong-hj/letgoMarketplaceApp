@@ -84,6 +84,9 @@ dependencies {
     //Firebase Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
+
 }
 
 configurations.implementation {

@@ -6,10 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
@@ -41,11 +38,18 @@ import com.example.letgo.widgets.CustomHeader
 import androidx.lifecycle.viewModelScope
 import com.example.letgo.viewModel.LikedViewModel
 import com.example.letgo.viewModel.UserViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomePage(navController: NavHostController, productVM: HomePageViewModel = viewModel(), userVM: UserViewModel = viewModel()) {
+
+    val isLoading by productVM.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
+
+
 
     val products: List<Products> by productVM.products.observeAsState(emptyList())
     var searchText by remember { mutableStateOf("") }
@@ -57,8 +61,34 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
     Scaffold(
 
         content = {
+
             Column(modifier = Modifier.fillMaxWidth()) {
-                CustomHeader(value = "Discover")
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 40.dp, start = 40.dp, end = 20.dp, bottom = 20.dp)
+                ) {
+
+                    Text(
+                        text = "Discover",
+                        color = Color.Black,
+                        style = Typography.h1,
+                        modifier = Modifier.weight(1f)
+                    )
+
+
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Routes.AddProduct.route)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add",
+                            tint = Color.Black
+                        )
+                    }
+                }
 
                 SearchBar(
                     modifier = Modifier
@@ -109,89 +139,94 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(start = 20.dp, end = 20.dp, bottom = 70.dp),
+                SwipeRefresh(
+                    state = swipeRefreshState,
+                    onRefresh = productVM::getProductData
                 ) {
-                    val displayedProducts = if (isSearching) searchProducts else products
-                    if (isSearching && displayedProducts.isEmpty()) {
-                        item {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(start = 20.dp, end = 20.dp, bottom = 70.dp),
+                    ) {
+                        val displayedProducts = if (isSearching) searchProducts else products
+                        if (isSearching && displayedProducts.isEmpty()) {
+                            item {
 
-                            Text(
-                                text = "No Result Found.",
-                                style = Typography.body2
-                            )
+                                Text(
+                                    text = "No Result Found.",
+                                    style = Typography.body2
+                                )
 
-                        }
-                    } else {
-                        items(displayedProducts) { product ->
+                            }
+                        } else {
+                            items(displayedProducts) { product ->
 
-                            if (isSearching && searchProducts.isEmpty()) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-                                    Text(
-                                        text = "No Result Found.",
-                                        modifier = Modifier.align(Alignment.Center),
-                                        textAlign = TextAlign.Center,
-                                        style = Typography.body2
-                                    )
-                                }
-
-                            } else {
-                                Card(
-                                    onClick = { /* Do something */ },
-                                    modifier = Modifier
-                                        .size(width = 180.dp, height = 200.dp)
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-
-
-                                    AsyncImage(
-                                        model = product.imageURL,
-                                        contentDescription = null,
-                                        contentScale = ContentScale.FillWidth,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(140.dp)
-                                    )
-
-
-                                    val text = buildAnnotatedString {
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                            append(product.name)
-                                        }
-                                        append("\nRM ${product.price} | ${product.quality}")
-                                    }
-
+                                if (isSearching && searchProducts.isEmpty()) {
                                     Box(
                                         modifier = Modifier
-                                            .fillMaxSize(),
-                                        contentAlignment = Alignment.Center
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .align(Alignment.CenterHorizontally)
                                     ) {
                                         Text(
-                                            text = text,
+                                            text = "No Result Found.",
                                             modifier = Modifier.align(Alignment.Center),
                                             textAlign = TextAlign.Center,
                                             style = Typography.body2
-
                                         )
                                     }
 
-                                }
-                            }
+                                } else {
+                                    Card(
+                                        onClick = { /* Do something */ },
+                                        modifier = Modifier
+                                            .size(width = 180.dp, height = 200.dp)
+                                            .align(Alignment.CenterHorizontally)
+                                    ) {
 
+
+                                        AsyncImage(
+                                            model = product.imageURL,
+                                            contentDescription = null,
+                                            contentScale = ContentScale.FillWidth,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(140.dp)
+                                        )
+
+
+                                        val text = buildAnnotatedString {
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append(product.name)
+                                            }
+                                            append("\nRM ${product.price} | ${product.quality}")
+                                        }
+
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = text,
+                                                modifier = Modifier.align(Alignment.Center),
+                                                textAlign = TextAlign.Center,
+                                                style = Typography.body2
+
+                                            )
+                                        }
+
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
+
 
 
             }

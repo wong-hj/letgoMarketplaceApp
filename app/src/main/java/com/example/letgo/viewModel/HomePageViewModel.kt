@@ -10,9 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.letgo.models.Products
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObjects
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -20,7 +22,8 @@ class HomePageViewModel : ViewModel() {
 
     private val _products = MutableLiveData<List<Products>>()
     val products: LiveData<List<Products>> = _products
-
+    private val _isLoading = MutableStateFlow( false )
+    val isLoading = _isLoading.asStateFlow()
     private val _searchProducts = MutableLiveData<List<Products>>()
     val searchProducts: LiveData<List<Products>> = _searchProducts
 
@@ -28,9 +31,11 @@ class HomePageViewModel : ViewModel() {
         getProductData()
     }
 
-    private fun getProductData() {
+     fun getProductData() {
         viewModelScope.launch {
+            _isLoading.value = true
             _products.value = getAllProductsList()
+            _isLoading.value = false
         }
     }
 

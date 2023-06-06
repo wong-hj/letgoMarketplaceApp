@@ -1,8 +1,10 @@
 package com.example.letgo
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Surface
@@ -13,6 +15,7 @@ import androidx.compose.runtime.*
 import com.example.letgo.screens.AddProduct
 import com.example.letgo.ui.theme.LetgoTheme
 import com.example.letgo.screens.MainScreen
+import com.example.letgo.viewModel.HomePageViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -25,18 +28,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AddProduct()
+                    //AddProduct()
                     //Login()
                     //Register()
-                    //MainScreen()
+                    MainScreen()
                 }
             }
         }
     }
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 //@Composable
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -44,7 +47,7 @@ fun DefaultPreview() {
     LetgoTheme {
         //Login()
         //Register()
-        AddProduct()
-        //MainScreen()
+        //AddProduct()
+        MainScreen()
     }
 }

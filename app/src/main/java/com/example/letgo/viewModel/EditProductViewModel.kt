@@ -102,40 +102,60 @@ class EditProductViewModel : ViewModel() {
 //        }
 //    }
 
-    fun updateProduct(image: Uri, name: String, description: String, brand: String, quality: String, location: String, price: String, productID: String) {
+    fun updateProduct(image: Uri?, name: String, description: String, brand: String, quality: String, location: String, price: String, productID: String) {
 
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference.child("images/$name.jpg")
+        if (image != null) {
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.reference.child("images/$name.jpg")
 
-        val uploadTask = storageRef.putFile(image)
+            val uploadTask = storageRef.putFile(image)
 
-        uploadTask.addOnSuccessListener {
-            // Image upload successful
+            uploadTask.addOnSuccessListener {
+                // Image upload successful
 
-            storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                val imageUrl = downloadUrl.toString()
-                val db = FirebaseFirestore.getInstance()
-                val product = hashMapOf(
-                    "name" to name,
-                    "description" to description,
-                    "brand" to brand,
-                    "quality" to quality,
-                    "location" to location,
-                    "price" to price.toIntOrNull(),
-                    "imageURL" to imageUrl
-                )
+                storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    val imageUrl = downloadUrl.toString()
+                    val db = FirebaseFirestore.getInstance()
+                    val product = hashMapOf(
+                        "name" to name,
+                        "description" to description,
+                        "brand" to brand,
+                        "quality" to quality,
+                        "location" to location,
+                        "price" to price.toIntOrNull(),
+                        "imageURL" to imageUrl
+                    )
 
-                db.collection("Products").document(productID)
-                    .update(product as Map<String, Any>)
-                    .addOnSuccessListener { documentReference ->
+                    db.collection("Products").document(productID)
+                        .update(product as Map<String, Any>)
+                        .addOnSuccessListener { documentReference ->
 
-                        Log.d("SuccessEdit", "Product added with ID: $documentReference")
-                    }
+                            Log.d("SuccessEdit", "Product added with ID: $documentReference")
+                        }
+                }
+            }.addOnFailureListener { exception ->
+                // Handle the image upload failure case
+                Log.e("ImageUploadError", "Error uploading image", exception)
             }
-        }.addOnFailureListener { exception ->
-            // Handle the image upload failure case
-            Log.e("ImageUploadError", "Error uploading image", exception)
+        } else {
+            val db = FirebaseFirestore.getInstance()
+            val product = hashMapOf(
+                "name" to name,
+                "description" to description,
+                "brand" to brand,
+                "quality" to quality,
+                "location" to location,
+                "price" to price.toIntOrNull()
+            )
+
+            db.collection("Products").document(productID)
+                .update(product as Map<String, Any>)
+                .addOnSuccessListener { documentReference ->
+
+                    Log.d("SuccessEdit", "Product added with ID: $documentReference")
+                }
         }
+
 
 
 

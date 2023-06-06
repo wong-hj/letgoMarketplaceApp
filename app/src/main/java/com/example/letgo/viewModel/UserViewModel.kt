@@ -15,6 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -26,13 +28,18 @@ class UserViewModel : ViewModel() {
     private val _userListings = MutableLiveData<List<Products>>()
     val userListings: LiveData<List<Products>> = _userListings
 
+    private val _isLoading = MutableStateFlow( false )
+    val isLoading = _isLoading.asStateFlow()
+
     init {
         getServiceData()
     }
 
-    private fun getServiceData() {
+    fun getServiceData() {
         viewModelScope.launch {
+            _isLoading.value = true
             state.value = fetchUser()!!
+            _isLoading.value = false
         }
     }
 

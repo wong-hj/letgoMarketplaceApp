@@ -36,6 +36,7 @@ import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomOutlinedTextField
 import com.example.letgo.widgets.CustomTextArea
 import kotlinx.coroutines.launch
+import org.checkerframework.checker.units.qual.s
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,23 +51,11 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    Log.d("TESTING ONLY", product?.name ?: "")
-    var name by remember { mutableStateOf(product?.name ?: "") }
-    Log.d("TESTING ONLYYY", name)
-    var description by remember { mutableStateOf(product?.description ?: "") }
-    var brand by remember { mutableStateOf(product?.brand ?: "") }
-    var location by remember { mutableStateOf(product?.location ?: "") }
-    var price by remember { mutableStateOf(product?.location ?: "") }
-
-
-    //validation
-    var validateName by rememberSaveable { mutableStateOf(true) }
-    var validateDesc by rememberSaveable { mutableStateOf(true) }
-    var validateBrand by rememberSaveable { mutableStateOf(true) }
-    var validateLocation by rememberSaveable { mutableStateOf(true) }
-    var validatePrice by rememberSaveable { mutableStateOf(true) }
-    var validatePriceInt: Int?
-    var validateImage by rememberSaveable { mutableStateOf(true) }
+    val name = remember {  mutableStateOf("") }
+    val description = remember { mutableStateOf("") }
+    val brand = remember { mutableStateOf("") }
+    val location = remember { mutableStateOf("") }
+    val price = remember { mutableStateOf("") }
 
     //dropdown
     val qualityOptions = listOf("Brand New", "Like New", "Light Used", "Heavy Used")
@@ -92,18 +81,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
         onResult = { uri -> selectedImageUri = uri }
     )
 
-    fun validateData(): Boolean {
-
-        validateName = name.isNotBlank()
-        validateDesc = description.isNotBlank()
-        validateBrand = brand.isNotBlank()
-        validateLocation = location.isNotBlank()
-        validatePrice = price.isNotBlank()
-        validatePriceInt = price.toIntOrNull()
-        validateImage = selectedImageUri != null
-
-        return validateName && validateDesc && validateBrand && validateLocation && validatePrice && validateImage && validatePriceInt != null
-    }
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -193,11 +170,8 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
             modifier = Modifier
                 .size(width = 280.dp, height = 250.dp)
                 .border(
-                    width = 1.dp, color = if (validateImage) {
-                        Color.LightGray
-                    } else {
-                        MaterialTheme.colorScheme.error
-                    }, shape = RoundedCornerShape(3.dp)
+                    width = 1.dp, color = Color.LightGray,
+                    shape = RoundedCornerShape(3.dp)
                 )
                 .align(Alignment.CenterHorizontally)
                 .clickable {
@@ -224,10 +198,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = name,
-            onValueChangeFun = {name = it},
-            labelText = "Product Name",
-            showError = !validateName,
+            value = name.value,
+            onValueChangeFun = {name.value = it},
+            labelText = product?.name ?: ""
         )
 
 
@@ -235,10 +208,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomTextArea(
-            value = description,
-            onValueChangeFun = {description = it},
-            labelText = "Description",
-            showError = !validateDesc
+            value = description.value,
+            onValueChangeFun = {description.value = it},
+            labelText = product?.description ?: ""
         )
 
 
@@ -246,10 +218,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = brand,
-            onValueChangeFun = {brand = it},
-            labelText = "Brand",
-            showError = !validateBrand,
+            value = brand.value,
+            onValueChangeFun = {brand.value = it},
+            labelText = product?.brand ?: ""
         )
 
 
@@ -265,7 +236,7 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
             OutlinedTextField(
                 value = selectedQuality,
-                onValueChange = { selectedQuality = it},
+                onValueChange = { selectedQuality = it },
                 readOnly = true,
                 label = { Text(text = "Quality", style = Typography.body2) },
                 trailingIcon = {
@@ -298,10 +269,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = location,
-            onValueChangeFun = {location = it},
-            labelText = "Meetup Location",
-            showError = !validateLocation,
+            value = location.value,
+            onValueChangeFun = {location.value = it},
+            labelText = product?.location ?: ""
         )
 
 
@@ -309,10 +279,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = price.toString(),
-            onValueChangeFun = {price = it},
-            labelText = "Price",
-            showError = !validatePrice,
+            value = price.value,
+            onValueChangeFun = {price.value = it},
+            labelText = product?.price.toString()
         )
 
 
@@ -328,41 +297,44 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                 btnText = "Update",
                 btnColor = MaterialTheme.colorScheme.tertiary,
                 onClickFun = {
+
+                    val updateName = name.value.ifBlank {
+                        product?.name ?: ""
+                    }
+                    val updateDesc = description.value.ifBlank {
+                        product?.description ?: ""
+                    }
+                    val updateBrand = brand.value.ifBlank {
+                        product?.brand ?: ""
+                    }
+                    val updateLocation = location.value.ifBlank {
+                        product?.location ?: ""
+                    }
+                    val updatePrice = price.value.ifBlank {
+                        product?.price.toString()
+                    }
                     scope.launch {
-                        if(validateData()) {
+
+
+                            vm.updateProduct(
+                                selectedImageUri,
+                                updateName,
+                                updateDesc,
+                                updateBrand,
+                                selectedQuality,
+                                updateLocation,
+                                updatePrice,
+                                product?.productID!!
+                            )
+
                             isLoading = true
 
-                            product?.let {
-//                                vm.updateProduct(
-//                                    selectedImageUri!!,
-//                                    name,
-//                                    description,
-//                                    brand,
-//                                    selectedQuality,
-//                                    location,
-//                                    price,
-//                                    it.productID
-//                                )
-
-                                Log.d("TESTING", selectedImageUri!!.toString() +
-                                    name +
-                                    description +
-                                    brand +
-                                    selectedQuality +
-                                    location +
-                                    price +
-                                    it.productID)
                             }
 
                             navController.navigateUp()
 
-
-                        } else {
-                            Toast.makeText(context, "Please Fill in all valid Fields.", Toast.LENGTH_SHORT).show()
-                        }
-
                         isLoading = false
-                    }
+
                 }
 
             )

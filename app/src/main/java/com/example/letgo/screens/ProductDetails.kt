@@ -1,5 +1,6 @@
 package com.example.letgo.screens
 
+import android.location.Geocoder
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -17,11 +18,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -29,16 +32,26 @@ import com.example.letgo.R
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.LikedViewModel
 import com.example.letgo.widgets.*
-import kotlinx.coroutines.launch
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.type.LatLng
+
 
 @Composable
 fun ProductDetails() {
+
+    val context = LocalContext.current
     var isSpecificationExpanded by remember { mutableStateOf(true) }
 
     var isMeetupExpanded by remember { mutableStateOf(true) }
 
 
-    Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .verticalScroll(rememberScrollState())) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -206,11 +219,46 @@ fun ProductDetails() {
             }
 
             if (isMeetupExpanded) {
-                Text(
-                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ... see more",
-                    color = Color.DarkGray,
-                    style = Typography.subtitle2
-                )
+//                Text(
+//                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ... see more",
+//                    color = Color.DarkGray,
+//                    style = Typography.subtitle2
+//                )
+
+                val address = "Asia Pacific University"
+                val geocoder = Geocoder(context)
+                val results = geocoder.getFromLocationName(address, 1)
+
+                if (results != null) {
+
+                    if (results.isNotEmpty()) {
+                        val location = results[0]
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+
+
+                        val mapLocation =
+                            com.google.android.gms.maps.model.LatLng(latitude, longitude)
+                        val locationState = MarkerState(position = mapLocation)
+                        val cameraPositionState = rememberCameraPositionState {
+                            position = CameraPosition.fromLatLngZoom(mapLocation, 15f)
+                        }
+
+                        GoogleMap(
+                            modifier = Modifier.fillMaxWidth().height(450.dp),
+                            cameraPositionState = cameraPositionState
+                        ) {
+                            Marker(
+                                state = locationState,
+                                title = "Singapore"
+                                //snippet = "Marker in Singapore"
+                            )
+                        }
+                    }
+
+                }
+
+
             }
 
             Divider(
@@ -226,7 +274,8 @@ fun ProductDetails() {
 
             Card(
                 modifier = Modifier
-                    .fillMaxWidth().shadow(5.dp),
+                    .fillMaxWidth()
+                    .shadow(5.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White,
                 ),

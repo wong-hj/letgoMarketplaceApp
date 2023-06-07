@@ -87,6 +87,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 
+    //Google Map
+
+    implementation 'com.google.maps.android:maps-compose:2.7.2'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
 }
 
 configurations.implementation {

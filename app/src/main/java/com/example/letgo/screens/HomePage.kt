@@ -181,7 +181,11 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
 
                                 } else {
                                     Card(
-                                        onClick = { /* Do something */ },
+                                        onClick = {
+                                            navController.navigate(
+                                                route = Routes.ProductDetails.route + "/${product.productID}"
+                                            )
+                                        },
                                         modifier = Modifier
                                             .size(width = 180.dp, height = 200.dp)
                                             .align(Alignment.CenterHorizontally)

@@ -41,9 +41,9 @@ fun MainScreen() {
             EditProduct(navController = navController)
         }
 
-//        composable(Routes.ProductDetails.route) {
-//            ProductDetails(navController = navController)
-//        }
+        composable(Routes.ProductDetails.route + "/{productID}") {
+            ProductDetails(navController = navController)
+        }
 
     }
 }

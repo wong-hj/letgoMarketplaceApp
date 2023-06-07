@@ -1,6 +1,7 @@
 package com.example.letgo.screens
 
 import android.location.Geocoder
+import android.util.Log
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,7 +32,9 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.letgo.R
 import com.example.letgo.ui.theme.Typography
+import com.example.letgo.viewModel.EditProductViewModel
 import com.example.letgo.viewModel.LikedViewModel
+import com.example.letgo.viewModel.ProductDetailsViewModel
 import com.example.letgo.widgets.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
@@ -41,13 +45,28 @@ import com.google.type.LatLng
 
 
 @Composable
-fun ProductDetails() {
+fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel = viewModel(), editVM: EditProductViewModel = viewModel()) {
+
+    val arguments = navController.currentBackStackEntry?.arguments
+    val documentId = arguments?.getString("productID")
+    Log.d("USERID123", documentId ?: "")
+    val product by vm.getProduct(documentId.toString()).observeAsState()
+    Log.d("USERIDNAME", product?.name ?: "")
+    Log.d("USERID", product?.location ?: "")
+    //val user by vm.getUser("JWXznzANHwhimGZIfUf5GvjXZX22").observeAsState()
+    LaunchedEffect(product) {
+        val userId = product?.userID ?: ""
+        val userData = vm.getUser(userId).value
+        // Use the userData as needed
+        Log.d("USERID", userData?.name ?: "")
+    }
+
 
     val context = LocalContext.current
     var isSpecificationExpanded by remember { mutableStateOf(true) }
 
     var isMeetupExpanded by remember { mutableStateOf(true) }
-
+    //Log.d("USERID2", product?.location ?: "")
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -58,8 +77,8 @@ fun ProductDetails() {
         ) {
             // Image
             AsyncImage(
-                //model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FLego%20Gun.jpg?alt=media&token=35edb901-233c-43be-86e1-aef54cedd304&_gl=1*1tb4zfb*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4wLjE2ODYxNDkyODcuMC4wLjA.",
-                model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FBee%20Dog.jpg?alt=media&token=de4ccf4f-6c03-45c8-9354-151081c8ab7f&_gl=1*va5zay*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4xLjE2ODYxNDk5MjcuMC4wLjA.",
+                model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FLego%20Gun.jpg?alt=media&token=35edb901-233c-43be-86e1-aef54cedd304&_gl=1*1tb4zfb*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4wLjE2ODYxNDkyODcuMC4wLjA.",
+                //model = product?.imageURL,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -72,10 +91,10 @@ fun ProductDetails() {
                         )
                     )
             )
-
+            //Log.d("USERID3", product?.location ?: "")
             // Back button
             IconButton(
-                onClick = { /* Handle back button click */ },
+                onClick = { navController.navigateUp() },
                 modifier = Modifier
                     .align(Alignment.TopStart)
             ) {
@@ -88,17 +107,18 @@ fun ProductDetails() {
             }
         }
 
-
+        //Log.d("USERID4", product?.location ?: "")
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)) {
             // Title
             Text(
-                text = "Bee Dog",
+                text = "Dog",
+                //text = product?.name ?: "",
                 color = Color.Black,
                 style = Typography.h2
             )
-
+            //Log.d("USERID5", product?.location ?: "")
             //Likes
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -108,18 +128,19 @@ fun ProductDetails() {
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "10 likes this",
+                    text = "${10} likes this",
                     color = Color.DarkGray,
                     style = Typography.subtitle1,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
-
+            //Log.d("USERID6", product?.location ?: "")
             //Description Section
             CustomIconText(value = "Description", icon = Icons.Default.Subject)
 
             Text(
-                text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ... see more",
+                text = "DESC",
+                //text = product?.description ?: "",
                 color = Color.DarkGray,
                 style = Typography.subtitle2
             )
@@ -131,7 +152,7 @@ fun ProductDetails() {
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-
+            //Log.d("USERID7", product?.location ?: "")
             // Specification Section
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)) {
 
@@ -168,11 +189,11 @@ fun ProductDetails() {
             }
 
             if (isSpecificationExpanded) {
-                CustomSmallSection(header= "Brand", value = "Apple")
+                CustomSmallSection(header= "Brand", value = "TEST")
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                CustomSmallSection(header= "Quality", value = "Brand New")
+                CustomSmallSection(header= "Quality", value = "TEST")
             }
 
             Divider(
@@ -219,13 +240,11 @@ fun ProductDetails() {
             }
 
             if (isMeetupExpanded) {
-//                Text(
-//                    text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ... see more",
-//                    color = Color.DarkGray,
-//                    style = Typography.subtitle2
-//                )
 
-                val address = "Asia Pacific University"
+                //Log.d("USERID123", product?.location ?: "")
+                val address = "One Sierra"
+                //val address = product?.location ?: ""
+                //Log.d("USERID1234", address)
                 val geocoder = Geocoder(context)
                 val results = geocoder.getFromLocationName(address, 1)
 
@@ -245,7 +264,9 @@ fun ProductDetails() {
                         }
 
                         GoogleMap(
-                            modifier = Modifier.fillMaxWidth().height(450.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(450.dp),
                             cameraPositionState = cameraPositionState
                         ) {
                             Marker(
@@ -255,9 +276,7 @@ fun ProductDetails() {
                             )
                         }
                     }
-
                 }
-
 
             }
 
@@ -294,9 +313,9 @@ fun ProductDetails() {
 
                     // Content
                     Column(modifier = Modifier.padding(start = 16.dp)) {
-                        Text(text = "John Doe", style = Typography.subtitle1)
-                        Text(text = "University of Compose", style = Typography.subtitle2)
-                        Text(text = "June 5, 2023", style = Typography.subtitle2)
+                        //Text(text = user?.name ?: "", style = Typography.subtitle1)
+                        //Text(text = user?.university ?: "", style = Typography.subtitle2)
+                        //Text(text = user?.studentID ?: "", style = Typography.subtitle2)
                     }
                 }
             }
@@ -316,7 +335,8 @@ fun ProductDetails() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "RM 449",
+                    text = "RM 699",
+                    //text = product?.price.toString(),
                     style = Typography.h2,
                     modifier = Modifier.weight(1f)
                 )

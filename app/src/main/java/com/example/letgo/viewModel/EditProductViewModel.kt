@@ -59,48 +59,6 @@ class EditProductViewModel : ViewModel() {
 
     }
 
-//    fun updateProduct(
-//        image: Uri,
-//        name: String,
-//        description: String,
-//        brand: String,
-//        quality: String,
-//        location: String,
-//        price: String,
-//        productID: String
-//    ) {
-//        val storage = FirebaseStorage.getInstance()
-//        val storageRef = storage.reference.child("images/$name.jpg")
-//
-//        val uploadTask = storageRef.putFile(image)
-//
-//        uploadTask.addOnSuccessListener {
-//            storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-//                val imageUrl = downloadUrl.toString()
-//                val db = FirebaseFirestore.getInstance()
-//                val productRef = db.collection("Products").document(productID)
-//
-//                val updatedProduct = hashMapOf(
-//                    "name" to name,
-//                    "description" to description,
-//                    "brand" to brand,
-//                    "quality" to quality,
-//                    "location" to location,
-//                    "price" to price.toIntOrNull(),
-//                    "imageURL" to imageUrl
-//                )
-//
-//                productRef.update(updatedProduct)
-//                    .addOnSuccessListener {
-//                        // Product update successful
-//                    }
-//                    .addOnFailureListener { e ->
-//                        // An error occurred while updating the product
-//                        // Handle the error appropriately
-//                    }
-//            }
-//        }
-//    }
 
     fun updateProduct(image: Uri?, name: String, description: String, brand: String, quality: String, location: String, price: String, productID: String) {
 
@@ -163,24 +121,25 @@ class EditProductViewModel : ViewModel() {
 
     }
 
+    suspend fun fetchProduct(documentID: String): Products? {
+        val db = FirebaseFirestore.getInstance()
+        val productDocRef = db.collection("Products").document(documentID)
 
-}
-
-suspend fun fetchProduct(documentID: String): Products? {
-    val db = FirebaseFirestore.getInstance()
-    val productDocRef = db.collection("Products").document(documentID)
-
-    try {
-        val documentSnapshot = productDocRef.get().await()
-        if (documentSnapshot.exists()) {
-            val product = documentSnapshot.toObject<Products>()
-            return product
+        try {
+            val documentSnapshot = productDocRef.get().await()
+            if (documentSnapshot.exists()) {
+                val product = documentSnapshot.toObject<Products>()
+                return product
+            }
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error fetching product: ${e.message}")
         }
-    } catch (e: Exception) {
-        Log.e("Firestore", "Error fetching product: ${e.message}")
+
+        return null
     }
 
-    return null
 }
+
+
 
 

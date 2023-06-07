@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import com.example.letgo.screens.AddProduct
 import com.example.letgo.ui.theme.LetgoTheme
 import com.example.letgo.screens.MainScreen
+import com.example.letgo.screens.ProductDetails
 import com.example.letgo.viewModel.HomePageViewModel
 
 
@@ -31,7 +32,8 @@ class MainActivity : ComponentActivity() {
                     //AddProduct()
                     //Login()
                     //Register()
-                    MainScreen()
+                    //MainScreen()
+                    ProductDetails()
                 }
             }
         }
@@ -48,6 +50,7 @@ fun DefaultPreview() {
         //Login()
         //Register()
         //AddProduct()
-        MainScreen()
+        //MainScreen()
+        ProductDetails()
     }
 }

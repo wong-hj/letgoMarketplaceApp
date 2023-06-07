@@ -32,10 +32,20 @@ val Typography = Typography(
         fontWeight = FontWeight.Light,
         fontSize = 16.sp
     ),
+    subtitle2 = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Light,
+        fontSize = 14.sp
+    ),
     h1 = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp
+    ),
+    h2 = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Bold,
+        fontSize = 25.sp
     ),
     h3 = TextStyle(
         fontFamily = Poppins,

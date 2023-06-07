@@ -99,25 +99,6 @@ fun CustomOutlinedTextField(
 }
 
 @Composable
-fun CustomHeader(
-    value: String
-){
-    Column(
-        horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .padding(top = 40.dp, start = 40.dp, bottom = 20.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = value,
-            color = Color.Black,
-            style = Typography.h1,
-        )
-    }
-
-}
-
-@Composable
 fun CustomTextArea(
     value: String,
     onValueChangeFun: (String) -> Unit,

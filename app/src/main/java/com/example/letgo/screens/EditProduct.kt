@@ -144,7 +144,7 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                         onClick = {
 
 
-                            product?.let { vm.deleteProduct(it.productID, it.name) }
+                            product?.let { vm.deleteProduct(it.productID, it.productID) }
                             openDialog.value = false
                             navController.navigateUp()
 

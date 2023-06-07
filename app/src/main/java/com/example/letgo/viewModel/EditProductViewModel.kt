@@ -31,11 +31,11 @@ class EditProductViewModel : ViewModel() {
         }
     }
 
-    fun deleteProduct(documentID: String, name: String) {
+    fun deleteProduct(documentID: String, productID: String) {
 
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val imageRef = storageRef.child("images/$name.jpg") // Replace with your image URL or path
+        val imageRef = storageRef.child("images/$productID.jpg") // Replace with your image URL or path
 
         imageRef.delete()
             .addOnSuccessListener {
@@ -106,7 +106,7 @@ class EditProductViewModel : ViewModel() {
 
         if (image != null) {
             val storage = FirebaseStorage.getInstance()
-            val storageRef = storage.reference.child("images/$name.jpg")
+            val storageRef = storage.reference.child("images/$productID.jpg")
 
             val uploadTask = storageRef.putFile(image)
 

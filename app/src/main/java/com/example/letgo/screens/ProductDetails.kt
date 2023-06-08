@@ -31,6 +31,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.letgo.R
+import com.example.letgo.models.Products
+import com.example.letgo.models.Users
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.EditProductViewModel
 import com.example.letgo.viewModel.LikedViewModel
@@ -53,13 +55,26 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     val product by vm.getProduct(documentId.toString()).observeAsState()
     Log.d("USERIDNAME", product?.name ?: "")
     Log.d("USERID", product?.location ?: "")
-    //val user by vm.getUser("JWXznzANHwhimGZIfUf5GvjXZX22").observeAsState()
-    LaunchedEffect(product) {
-        val userId = product?.userID ?: ""
-        val userData = vm.getUser(userId).value
-        // Use the userData as needed
-        Log.d("USERID", userData?.name ?: "")
+
+    val userID = product?.userID
+
+    Log.d("USERIDNAME", userID ?: "NOTIHNG")
+
+    if (userID != null) {
+        vm.getProductUser(userID)
     }
+
+    val user by vm.getUser.observeAsState()
+    val addressMap = product?.location
+
+
+    //val user by vm.getUser("JWXznzANHwhimGZIfUf5GvjXZX22").observeAsState()
+//    LaunchedEffect(product) {
+//        val userId = product?.userID ?: ""
+//        val userData = vm.getUser(userId).value
+//        // Use the userData as needed
+//        Log.d("USERID", userData?.name ?: "")
+//    }
 
 
     val context = LocalContext.current
@@ -77,8 +92,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
         ) {
             // Image
             AsyncImage(
-                model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FLego%20Gun.jpg?alt=media&token=35edb901-233c-43be-86e1-aef54cedd304&_gl=1*1tb4zfb*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4wLjE2ODYxNDkyODcuMC4wLjA.",
-                //model = product?.imageURL,
+                //model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FLego%20Gun.jpg?alt=media&token=35edb901-233c-43be-86e1-aef54cedd304&_gl=1*1tb4zfb*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4wLjE2ODYxNDkyODcuMC4wLjA.",
+                model = product?.imageURL,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -113,8 +128,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             .padding(16.dp)) {
             // Title
             Text(
-                text = "Dog",
-                //text = product?.name ?: "",
+                //text = "Dog",
+                text = product?.name ?: "",
                 color = Color.Black,
                 style = Typography.h2
             )
@@ -128,7 +143,9 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "${10} likes this",
+                    text = "${
+                        product?.likes.toString()
+                    } likes this",
                     color = Color.DarkGray,
                     style = Typography.subtitle1,
                     modifier = Modifier.padding(start = 8.dp)
@@ -139,8 +156,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             CustomIconText(value = "Description", icon = Icons.Default.Subject)
 
             Text(
-                text = "DESC",
-                //text = product?.description ?: "",
+                //text = "DESC",
+                text = product?.description ?: "",
                 color = Color.DarkGray,
                 style = Typography.subtitle2
             )
@@ -189,11 +206,17 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             }
 
             if (isSpecificationExpanded) {
-                CustomSmallSection(header= "Brand", value = "TEST")
+                CustomSmallSection(header= "Brand", value =
+                product?.brand ?: ""
+                //"Brand"
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                CustomSmallSection(header= "Quality", value = "TEST")
+                CustomSmallSection(header= "Quality", value =
+                    //"quality"
+                product?.quality ?: ""
+                )
             }
 
             Divider(
@@ -241,12 +264,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
 
             if (isMeetupExpanded) {
 
-                //Log.d("USERID123", product?.location ?: "")
-                val address = "One Sierra"
-                //val address = product?.location ?: ""
-                //Log.d("USERID1234", address)
                 val geocoder = Geocoder(context)
-                val results = geocoder.getFromLocationName(address, 1)
+                val results = addressMap?.let { geocoder.getFromLocationName(it, 1) }
 
                 if (results != null) {
 
@@ -271,8 +290,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                         ) {
                             Marker(
                                 state = locationState,
-                                title = "Singapore"
-                                //snippet = "Marker in Singapore"
+                                title = "Location"
                             )
                         }
                     }
@@ -313,9 +331,9 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
 
                     // Content
                     Column(modifier = Modifier.padding(start = 16.dp)) {
-                        //Text(text = user?.name ?: "", style = Typography.subtitle1)
-                        //Text(text = user?.university ?: "", style = Typography.subtitle2)
-                        //Text(text = user?.studentID ?: "", style = Typography.subtitle2)
+                        Text(text = user?.name ?: "", style = Typography.subtitle1)
+                        Text(text = user?.university ?: "", style = Typography.subtitle2)
+                        Text(text = user?.studentID ?: "", style = Typography.subtitle2)
                     }
                 }
             }
@@ -335,8 +353,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "RM 699",
-                    //text = product?.price.toString(),
+                    // = "RM 699",
+                    text = product?.price.toString(),
                     style = Typography.h2,
                     modifier = Modifier.weight(1f)
                 )

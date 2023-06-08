@@ -22,8 +22,10 @@ class HomePageViewModel : ViewModel() {
 
     private val _products = MutableLiveData<List<Products>>()
     val products: LiveData<List<Products>> = _products
+
     private val _isLoading = MutableStateFlow( false )
     val isLoading = _isLoading.asStateFlow()
+
     private val _searchProducts = MutableLiveData<List<Products>>()
     val searchProducts: LiveData<List<Products>> = _searchProducts
 

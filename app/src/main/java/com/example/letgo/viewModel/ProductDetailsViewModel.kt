@@ -19,7 +19,6 @@ class ProductDetailsViewModel: ViewModel() {
 
     private val _user = MutableLiveData<Users>()
     val getUser: LiveData<Users> = _user
-
     fun getProduct(documentID: String): LiveData<Products> {
         getData(documentID)
         Log.d("Firestore", getProduct.toString())
@@ -39,11 +38,7 @@ class ProductDetailsViewModel: ViewModel() {
         }
     }
 
-    private fun getProductUser(userID: String) {
-        viewModelScope.launch {
-            _user.value = productUser(userID)
-        }
-    }
+
 
 
     suspend fun fetchProduct(documentID: String): Products? {
@@ -69,20 +64,30 @@ class ProductDetailsViewModel: ViewModel() {
     }
 
     suspend fun productUser(userID: String): Users? {
-
+        Log.d("Firestore", "Gets here111")
+        Log.d("Firestore", "Gets here111 - ${userID} - 222")
         val db = FirebaseFirestore.getInstance()
         val userDocRef = db.collection("Users").document(userID)
-
+        Log.d("Firestore", "Gets here222")
         try {
             val documentSnapshot = userDocRef.get().await()
+            Log.d("Firestore", "Gets here3333")
             if (documentSnapshot.exists()) {
                 val user = documentSnapshot.toObject<Users>()
+                Log.d("Firestore", user.toString())
                 return user
+
             }
         } catch (e: Exception) {
             Log.e("Firestore", "Error fetching user: ${e.message}")
         }
 
         return null
+    }
+
+    fun getProductUser(userID: String) {
+        viewModelScope.launch {
+            _user.value = productUser(userID)
+        }
     }
 }

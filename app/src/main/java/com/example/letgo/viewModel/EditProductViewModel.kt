@@ -30,7 +30,6 @@ class EditProductViewModel : ViewModel() {
             _product.value = fetchProduct(documentID)
         }
     }
-
     fun deleteProduct(documentID: String, productID: String) {
 
         val storage = FirebaseStorage.getInstance()
@@ -46,6 +45,7 @@ class EditProductViewModel : ViewModel() {
                     .addOnSuccessListener {
                         // Delete successful, perform any additional actions if needed
                         // For example, show a success message or navigate to a different screen
+
                     }
                     .addOnFailureListener { e ->
                         // An error occurred while deleting the document

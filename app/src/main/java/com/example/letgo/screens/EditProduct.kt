@@ -1,5 +1,6 @@
 package com.example.letgo.screens
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -37,8 +38,10 @@ import com.example.letgo.widgets.CustomOutlinedTextField
 import com.example.letgo.widgets.CustomTextArea
 import kotlinx.coroutines.launch
 import org.checkerframework.checker.units.qual.s
+import kotlin.math.absoluteValue
 
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProduct(navController: NavHostController, vm: EditProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
@@ -51,19 +54,32 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val name = remember {  mutableStateOf("") }
-    val description = remember { mutableStateOf("") }
-    val brand = remember { mutableStateOf("") }
-    val location = remember { mutableStateOf("") }
-    val price = remember { mutableStateOf("") }
+//    var addressMap1 = product?.location
+//    var addressMap by remember { mutableStateOf(product?.location) }
+//    if (addressMap != null) {
+//        Log.d("ADDRESS", addressMap!!)
+//    }
+//
+//    if (addressMap1 != null) {
+//        Log.d("ADDRESS1", addressMap1)
+//    }
+
+    var name by remember {  mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var brand by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
 
     //dropdown
     val qualityOptions = listOf("Brand New", "Like New", "Light Used", "Heavy Used")
     //val defaultQuality = "Quality"
-    var selectedQuality by remember { mutableStateOf(product?.quality ?: qualityOptions[0]) }
+    var selectedQuality by remember { mutableStateOf(qualityOptions[0]) }
     var expanded by remember { mutableStateOf(false) }
+
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
+
+
 
 
     LaunchedEffect(key1 = imeState.value) {
@@ -81,6 +97,17 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
         onResult = { uri -> selectedImageUri = uri }
     )
 
+    LaunchedEffect(Unit) {
+        product?.let {
+            name = it.name
+            description = it.description
+            brand = it.brand
+            location = it.location
+            price = it.price.toString()
+            selectedQuality = it.quality
+
+        }
+    }
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -198,9 +225,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = name.value,
-            onValueChangeFun = {name.value = it},
-            labelText = product?.name ?: ""
+            value = name,
+            onValueChangeFun = {name = it},
+            labelText = "Name"
         )
 
 
@@ -208,9 +235,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomTextArea(
-            value = description.value,
-            onValueChangeFun = {description.value = it},
-            labelText = product?.description ?: ""
+            value = description,
+            onValueChangeFun = {description = it},
+            labelText = "Description"
         )
 
 
@@ -218,9 +245,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = brand.value,
-            onValueChangeFun = {brand.value = it},
-            labelText = product?.brand ?: ""
+            value = brand,
+            onValueChangeFun = {brand = it},
+            labelText = "Brand"
         )
 
 
@@ -269,9 +296,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = location.value,
-            onValueChangeFun = {location.value = it},
-            labelText = product?.location ?: ""
+            value = location,
+            onValueChangeFun = {location = it},
+            labelText = "Location"
         )
 
 
@@ -279,9 +306,9 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
 
         CustomOutlinedTextField(
-            value = price.value,
-            onValueChangeFun = {price.value = it},
-            labelText = product?.price.toString()
+            value = price,
+            onValueChangeFun = {price = it},
+            labelText = "Price"
         )
 
 
@@ -298,42 +325,41 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                 btnColor = MaterialTheme.colorScheme.tertiary,
                 onClickFun = {
 
-                    val updateName = name.value.ifBlank {
-                        product?.name ?: ""
-                    }
-                    val updateDesc = description.value.ifBlank {
-                        product?.description ?: ""
-                    }
-                    val updateBrand = brand.value.ifBlank {
-                        product?.brand ?: ""
-                    }
-                    val updateLocation = location.value.ifBlank {
-                        product?.location ?: ""
-                    }
-                    val updatePrice = price.value.ifBlank {
-                        product?.price.toString()
-                    }
+//                    val updateName = name.value.ifBlank {
+//                        product?.name ?: ""
+//                    }
+//                    val updateDesc = description.value.ifBlank {
+//                        product?.description ?: ""
+//                    }
+//                    val updateBrand = brand.value.ifBlank {
+//                        product?.brand ?: ""
+//                    }
+//                    val updateLocation = location.value.ifBlank {
+//                        product?.location ?: ""
+//                    }
+//                    val updatePrice = price.value.ifBlank {
+//                        product?.price.toString()
+//                    }
                     scope.launch {
-
 
                             vm.updateProduct(
                                 selectedImageUri,
-                                updateName,
-                                updateDesc,
-                                updateBrand,
+                                name,
+                                description,
+                                brand,
                                 selectedQuality,
-                                updateLocation,
-                                updatePrice,
+                                location,
+                                price,
                                 product?.productID!!
                             )
 
                             isLoading = true
 
-                            }
+                    }
 
-                            navController.navigateUp()
+                    navController.navigateUp()
 
-                        isLoading = false
+                    isLoading = false
 
                 }
 

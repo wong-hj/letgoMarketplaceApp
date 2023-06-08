@@ -270,6 +270,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 if (results != null) {
 
                     if (results.isNotEmpty()) {
+
                         val location = results[0]
                         val latitude = location.latitude
                         val longitude = location.longitude
@@ -354,7 +355,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             ) {
                 Text(
                     // = "RM 699",
-                    text = product?.price.toString(),
+                    text = "RM ${product?.price.toString()}",
                     style = Typography.h2,
                     modifier = Modifier.weight(1f)
                 )

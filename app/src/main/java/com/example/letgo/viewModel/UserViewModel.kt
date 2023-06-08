@@ -61,7 +61,6 @@ class UserViewModel : ViewModel() {
                 null
             }
 
-
         } catch (e: Exception) {
             null
         }

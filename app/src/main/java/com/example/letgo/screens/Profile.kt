@@ -79,7 +79,7 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                             .offset(y = 10.dp)
                             .clickable {
                                 auth.signOut()
-                                navController.navigate(Routes.Login.route)
+                                navController.popBackStack(Routes.Login.route, inclusive = false, saveState = false)
                             }
                     )
                 }

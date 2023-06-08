@@ -54,16 +54,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-//    var addressMap1 = product?.location
-//    var addressMap by remember { mutableStateOf(product?.location) }
-//    if (addressMap != null) {
-//        Log.d("ADDRESS", addressMap!!)
-//    }
-//
-//    if (addressMap1 != null) {
-//        Log.d("ADDRESS1", addressMap1)
-//    }
-
     var name by remember {  mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var brand by remember { mutableStateOf("") }
@@ -78,8 +68,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
-
-
 
 
     LaunchedEffect(key1 = imeState.value) {

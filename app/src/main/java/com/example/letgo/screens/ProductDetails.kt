@@ -52,14 +52,11 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     val arguments = navController.currentBackStackEntry?.arguments
     val documentId = arguments?.getString("productID")
 
-
     val user by vm.getUser.observeAsState()
     val currentUser by vm.getCurrentUser.observeAsState()
     val product by vm.getData.observeAsState()
 
     val userID = product?.userID
-
-    var isProductLiked by remember { mutableStateOf(false) }
 
     vm.getData(documentId.toString())
 
@@ -69,9 +66,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     vm.getCurrentUser()
     var productDefaultLiked  by remember { mutableStateOf(false) }
 
-    if (currentUser?.likedProducts?.contains(product?.productID) == true) {
-        productDefaultLiked = true
-    }
+    productDefaultLiked = currentUser?.likedProducts?.contains(product?.productID) == true
 
     val addressMap = product?.location
 
@@ -363,9 +358,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 IconButton(
                     onClick = {
 
-
-                        if (isProductLiked) {
-
+                        if(productDefaultLiked) {
                             // Unlike
                             vm.unlikeProduct(product?.productID ?: "", product?.likes ?: 0) { success ->
                                 if(success) {
@@ -375,27 +368,26 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
 
                                 }
                             }
+                        }
 
-                        } else {
 
+                        if (!productDefaultLiked) {
                             // Like
                             vm.addLikeProduct(product?.productID ?: "") { success ->
-                                if(success) {
+                                if (success) {
                                     vm.getData(documentId.toString())
                                     likeCounter.plus(1)
 
                                 }
                             }
-
                         }
 
-                        isProductLiked = !isProductLiked
                     }
 
                 ) {
 
                     Icon(
-                        imageVector = if (isProductLiked && productDefaultLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (productDefaultLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Love Icon",
                         tint = Color.Red
                     )

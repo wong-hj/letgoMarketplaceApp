@@ -191,11 +191,10 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                                             .align(Alignment.CenterHorizontally)
                                     ) {
 
-
                                         AsyncImage(
                                             model = product.imageURL,
                                             contentDescription = null,
-                                            contentScale = ContentScale.FillBounds,
+                                            contentScale = ContentScale.Crop,
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(140.dp)

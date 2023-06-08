@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letgo.models.Products
 import com.example.letgo.models.Users
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.launch
@@ -15,15 +17,20 @@ import kotlinx.coroutines.tasks.await
 class ProductDetailsViewModel: ViewModel() {
 
     private val _product = MutableLiveData<Products>()
-    val getProduct: LiveData<Products> = _product
+    //val getProduct: LiveData<Products> = _product
+    val getData: LiveData<Products> = _product
 
     private val _user = MutableLiveData<Users>()
     val getUser: LiveData<Users> = _user
-    fun getProduct(documentID: String): LiveData<Products> {
-        getData(documentID)
-        Log.d("Firestore", getProduct.toString())
-        return getProduct
-    }
+
+    private val _currentUser = MutableLiveData<Users>()
+    val getCurrentUser: LiveData<Users> = _currentUser
+
+//    fun getProduct(documentID: String): LiveData<Products> {
+//        getData(documentID)
+//        Log.d("Firestore", getProduct.toString())
+//        return getProduct
+//    }
 
     fun getUser(userID: String): LiveData<Users> {
 
@@ -31,14 +38,12 @@ class ProductDetailsViewModel: ViewModel() {
         return getUser
     }
 
-    private fun getData(documentID: String) {
+    fun getData(documentID: String) {
         viewModelScope.launch {
             _product.value = fetchProduct(documentID)
             Log.d("Firestore123", _product.value.toString())
         }
     }
-
-
 
 
     suspend fun fetchProduct(documentID: String): Products? {
@@ -89,5 +94,77 @@ class ProductDetailsViewModel: ViewModel() {
         viewModelScope.launch {
             _user.value = productUser(userID)
         }
+    }
+
+    suspend fun currentUser(): Users? {
+
+        val db = FirebaseFirestore.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val userDocRef = db.collection("Users").document(userId ?: "")
+
+        try {
+            val documentSnapshot = userDocRef.get().await()
+
+            if (documentSnapshot.exists()) {
+                val currentUser = documentSnapshot.toObject<Users>()
+
+                return currentUser
+
+            }
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error fetching user: ${e.message}")
+        }
+
+        return null
+    }
+
+    fun getCurrentUser() {
+        viewModelScope.launch {
+            _currentUser.value = currentUser()
+        }
+    }
+
+    fun addLikeProduct(productID: String, callback: (Boolean) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        db.collection("Users").document(userId ?: "")
+            .update("likedProducts", FieldValue.arrayUnion(productID))
+            .addOnSuccessListener {
+                db.collection("Products").document(productID)
+                    .update("likes", FieldValue.increment(1))
+                callback(true)
+            }.addOnFailureListener {
+                callback(false)
+            }
+
+
+    }
+
+    fun unlikeProduct(productID: String, likes: Int, callback: (Boolean) -> Unit) {
+
+        Log.d("unlikeProduct", likes.toString())
+
+        val db = FirebaseFirestore.getInstance()
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        db.collection("Users").document(userId ?: "")
+            .update("likedProducts", FieldValue.arrayRemove(productID))
+            .addOnSuccessListener {
+
+                if (likes > 0) {
+                    db.collection("Products").document(productID)
+                        .update("likes", FieldValue.increment(-1))
+                }
+
+                callback(true)
+
+            }.addOnFailureListener {
+                // Unlike operation failed
+                callback(false)
+            }
     }
 }

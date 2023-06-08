@@ -51,37 +51,38 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
 
     val arguments = navController.currentBackStackEntry?.arguments
     val documentId = arguments?.getString("productID")
-    Log.d("USERID123", documentId ?: "")
-    val product by vm.getProduct(documentId.toString()).observeAsState()
-    Log.d("USERIDNAME", product?.name ?: "")
-    Log.d("USERID", product?.location ?: "")
+
+
+    val user by vm.getUser.observeAsState()
+    val currentUser by vm.getCurrentUser.observeAsState()
+    val product by vm.getData.observeAsState()
 
     val userID = product?.userID
 
-    Log.d("USERIDNAME", userID ?: "NOTIHNG")
+    var isProductLiked by remember { mutableStateOf(false) }
+
+    vm.getData(documentId.toString())
 
     if (userID != null) {
         vm.getProductUser(userID)
     }
+    vm.getCurrentUser()
+    var productDefaultLiked  by remember { mutableStateOf(false) }
 
-    val user by vm.getUser.observeAsState()
+    if (currentUser?.likedProducts?.contains(product?.productID) == true) {
+        productDefaultLiked = true
+    }
+
     val addressMap = product?.location
 
+    var likeCounter by remember { mutableStateOf(-1) }
 
-    //val user by vm.getUser("JWXznzANHwhimGZIfUf5GvjXZX22").observeAsState()
-//    LaunchedEffect(product) {
-//        val userId = product?.userID ?: ""
-//        val userData = vm.getUser(userId).value
-//        // Use the userData as needed
-//        Log.d("USERID", userData?.name ?: "")
-//    }
-
+    likeCounter = product?.likes ?: 0
 
     val context = LocalContext.current
     var isSpecificationExpanded by remember { mutableStateOf(true) }
 
     var isMeetupExpanded by remember { mutableStateOf(true) }
-    //Log.d("USERID2", product?.location ?: "")
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -106,7 +107,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                         )
                     )
             )
-            //Log.d("USERID3", product?.location ?: "")
             // Back button
             IconButton(
                 onClick = { navController.navigateUp() },
@@ -122,7 +122,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             }
         }
 
-        //Log.d("USERID4", product?.location ?: "")
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)) {
@@ -133,8 +132,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 color = Color.Black,
                 style = Typography.h2
             )
-            //Log.d("USERID5", product?.location ?: "")
             //Likes
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
@@ -143,15 +142,13 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = "${
-                        product?.likes.toString()
-                    } likes this",
+                    text = if(likeCounter > 0) { "$likeCounter like this" } else { "0 like this" },
                     color = Color.DarkGray,
                     style = Typography.subtitle1,
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
-            //Log.d("USERID6", product?.location ?: "")
+
             //Description Section
             CustomIconText(value = "Description", icon = Icons.Default.Subject)
 
@@ -169,7 +166,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-            //Log.d("USERID7", product?.location ?: "")
             // Specification Section
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)) {
 
@@ -206,16 +202,13 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             }
 
             if (isSpecificationExpanded) {
-                CustomSmallSection(header= "Brand", value =
-                product?.brand ?: ""
-                //"Brand"
+                CustomSmallSection(header= "Brand", value = product?.brand ?: ""
+
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                CustomSmallSection(header= "Quality", value =
-                    //"quality"
-                product?.quality ?: ""
+                CustomSmallSection(header= "Quality", value = product?.quality ?: ""
                 )
             }
 
@@ -368,17 +361,55 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 }
 
                 IconButton(
-                    onClick = { /* Handle love icon click */ }
+                    onClick = {
+
+
+                        if (isProductLiked) {
+
+                            // Unlike
+                            vm.unlikeProduct(product?.productID ?: "", product?.likes ?: 0) { success ->
+                                if(success) {
+
+                                    vm.getData(documentId.toString())
+                                    likeCounter.minus(1)
+
+                                }
+                            }
+
+                        } else {
+
+                            // Like
+                            vm.addLikeProduct(product?.productID ?: "") { success ->
+                                if(success) {
+                                    vm.getData(documentId.toString())
+                                    likeCounter.plus(1)
+
+                                }
+                            }
+
+                        }
+
+                        isProductLiked = !isProductLiked
+                    }
+
                 ) {
+
                     Icon(
-                        imageVector = Icons.Default.Favorite,
+                        imageVector = if (isProductLiked && productDefaultLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Love Icon",
                         tint = Color.Red
                     )
+
                 }
             }
         }
 
     }
 
+
+
 }
+
+
+
+

@@ -370,10 +370,10 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 if (productIdDefaultOffered && buyerIdDefaultOffered) {
 
                     Button(
-                        
+                        onClick = { /* Handle chat button click */ },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
 
-                        ) {
+                    ) {
                         Text(text = "Offer Sent")
                     }
 

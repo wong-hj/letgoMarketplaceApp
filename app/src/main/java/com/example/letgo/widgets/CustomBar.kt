@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -44,6 +45,7 @@ fun CustomBottomBar(navController: NavController) {
     val items = listOf(
         BottomBar.Home,
         BottomBar.Liked,
+        BottomBar.Offer,
         BottomBar.Profile
     )
     BottomNavigation(
@@ -55,7 +57,8 @@ fun CustomBottomBar(navController: NavController) {
             BottomNavigationItem(
                 icon = { Icon((item.icon), contentDescription = item.title, tint = MaterialTheme.colorScheme.background) },
                 label = { Text(text = item.title, style = Typography.body2, color = MaterialTheme.colorScheme.background) },
-                selectedContentColor = MaterialTheme.colorScheme.tertiary,
+                selectedContentColor = Color.Black,
+                //MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.background.copy(0.4f),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,

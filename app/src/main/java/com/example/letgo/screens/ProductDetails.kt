@@ -302,7 +302,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 modifier = Modifier
                     .fillMaxWidth()
                     .shadow(5.dp),
-                colors = CardDefaults.cardColors(
+                    colors = CardDefaults.cardColors(
                     containerColor = Color.White,
                 ),
 

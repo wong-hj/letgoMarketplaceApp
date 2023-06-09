@@ -235,7 +235,7 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                                             )
                                             Icon(
                                                 imageVector = Icons.Default.Star,
-                                                tint = Color.Yellow,
+                                                tint = Color(255, 204, 0),
                                                 contentDescription = null
                                             )
                                             Text(

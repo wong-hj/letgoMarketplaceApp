@@ -8,7 +8,7 @@ data class Offers(
     val sellerID: String = "",
     val buyerID: String = "",
     val buyerName: String = "",
-    val offerPrice: Double = 0.0,
+    val offerPrice: Int = 0,
     val imageURL: String = "",
     val status: String = "None"
 

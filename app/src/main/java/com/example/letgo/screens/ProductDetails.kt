@@ -1,13 +1,8 @@
 package com.example.letgo.screens
 
 import android.location.Geocoder
-import android.util.Log
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -20,35 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontVariation.weight
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.letgo.R
 import com.example.letgo.models.Offers
-import com.example.letgo.models.Products
 import com.example.letgo.models.Reviews
-import com.example.letgo.models.Users
 import com.example.letgo.ui.theme.Typography
-import com.example.letgo.viewModel.EditProductViewModel
-import com.example.letgo.viewModel.LikedViewModel
 import com.example.letgo.viewModel.OfferViewModel
 import com.example.letgo.viewModel.ProductDetailsViewModel
 import com.example.letgo.widgets.*
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.type.LatLng
+import com.google.maps.android.compose.*
 
 
 @Composable
@@ -301,6 +283,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                             position = CameraPosition.fromLatLngZoom(mapLocation, 15f)
                         }
 
+                        Text(addressMap, style = Typography.h3)
+
                         GoogleMap(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -312,7 +296,11 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                                 title = "Location"
                             )
                         }
+
                     }
+                } else {
+
+                    Text("The location is not valid.", style = Typography.subtitle1)
                 }
 
             }
@@ -384,7 +372,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                             )
                             Icon(
                                 imageVector = Icons.Default.Star,
-                                tint = Color.Yellow,
+                                tint = Color(255, 204, 0),
                                 contentDescription = null
                             )
                             Text(

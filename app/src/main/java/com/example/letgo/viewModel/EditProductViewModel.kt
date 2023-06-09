@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letgo.models.Products
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -44,7 +45,66 @@ class EditProductViewModel : ViewModel() {
                 productRef.delete()
                     .addOnSuccessListener {
                         // Delete successful, perform any additional actions if needed
-                        // For example, show a success message or navigate to a different screen
+                        db.collection("Offers")
+                            .whereEqualTo("productID", productID)
+                            .get()
+                            .addOnSuccessListener { querySnapshot ->
+                                for (document in querySnapshot.documents) {
+                                    val documentRef = db.collection("Offers").document(document.id)
+                                    documentRef.delete()
+                                        .addOnSuccessListener {
+                                            Log.d("Delete", "Delete successfully")
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.e("Delete", "Error updating review", exception)
+                                        }
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.e("QueryReviews", "Error querying reviews", exception)
+                            }
+
+                        db.collection("Reviews")
+                            .whereEqualTo("productID", productID)
+                            .get()
+                            .addOnSuccessListener { querySnapshot ->
+                                for (document in querySnapshot.documents) {
+                                    val documentRef = db.collection("Reviews").document(document.id)
+                                    documentRef.delete()
+                                        .addOnSuccessListener {
+                                            Log.d("Delete", "Delete successfully")
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            Log.e("Delete", "Error updating review", exception)
+                                        }
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.e("QueryReviews", "Error querying reviews", exception)
+                            }
+
+                        val usersCollectionRef = db.collection("Users")
+                            usersCollectionRef.get()
+                                .addOnSuccessListener { querySnapshot ->
+
+                                val batch = db.batch()
+                                for (userDoc in querySnapshot.documents) {
+                                    // Remove the product ID from the likedProducts array field
+                                    val userRef = usersCollectionRef.document(userDoc.id)
+                                    batch.update(userRef, "likedProducts", FieldValue.arrayRemove(productID))
+                                }
+
+                                batch.commit()
+                                    .addOnSuccessListener {
+                                        // The product ID was successfully removed from all users' likedProducts arrays
+                                        Log.d("RemoveProduct", "Product removed from all users successfully")
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        // An error occurred while removing the product ID from users' likedProducts arrays
+                                        Log.e("RemoveProduct", "Error removing product from users", exception)
+                                    }
+
+                            }
 
                     }
                     .addOnFailureListener { e ->
@@ -88,6 +148,25 @@ class EditProductViewModel : ViewModel() {
                         .update(product as Map<String, Any>)
                         .addOnSuccessListener { documentReference ->
 
+                            db.collection("Offers")
+                                .whereEqualTo("productID", productID)
+                                .get()
+                                .addOnSuccessListener { querySnapshot ->
+                                    for (document in querySnapshot.documents) {
+                                        val documentRef = db.collection("Offers").document(document.id)
+                                        documentRef.update("productName", name, "imageURL", imageUrl)
+                                            .addOnSuccessListener {
+                                                Log.d("Update", "Update successfully")
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                Log.e("Update", "Error updating review", exception)
+                                            }
+                                    }
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.e("QueryReviews", "Error querying reviews", exception)
+                                }
+
                             Log.d("SuccessEdit", "Product added with ID: $documentReference")
                         }
                 }
@@ -109,6 +188,25 @@ class EditProductViewModel : ViewModel() {
             db.collection("Products").document(productID)
                 .update(product as Map<String, Any>)
                 .addOnSuccessListener { documentReference ->
+
+                    db.collection("Offers")
+                        .whereEqualTo("productID", productID)
+                        .get()
+                        .addOnSuccessListener { querySnapshot ->
+                            for (document in querySnapshot.documents) {
+                                val documentRef = db.collection("Offers").document(document.id)
+                                documentRef.update("productName", name, )
+                                    .addOnSuccessListener {
+                                        Log.d("Update", "Update successfully")
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        Log.e("Update", "Error updating review", exception)
+                                    }
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("QueryReviews", "Error querying reviews", exception)
+                        }
 
                     Log.d("SuccessEdit", "Product added with ID: $documentReference")
                 }

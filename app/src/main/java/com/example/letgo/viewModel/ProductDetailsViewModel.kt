@@ -79,17 +79,12 @@ class ProductDetailsViewModel: ViewModel() {
     }
 
     suspend fun productUser(userID: String): Users? {
-        Log.d("Firestore", "Gets here111")
-        Log.d("Firestore", "Gets here111 - ${userID} - 222")
         val db = FirebaseFirestore.getInstance()
         val userDocRef = db.collection("Users").document(userID)
-        Log.d("Firestore", "Gets here222")
         try {
             val documentSnapshot = userDocRef.get().await()
-            Log.d("Firestore", "Gets here3333")
             if (documentSnapshot.exists()) {
                 val user = documentSnapshot.toObject<Users>()
-                Log.d("Firestore", user.toString())
                 return user
 
             }

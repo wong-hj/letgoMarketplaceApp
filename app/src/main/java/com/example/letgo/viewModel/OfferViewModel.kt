@@ -59,7 +59,7 @@ class OfferViewModel : ViewModel() {
                 val sellerID = document.getString("sellerID") ?: ""
                 val buyerID = document.getString("buyerID") ?: ""
                 val buyerName = document.getString("buyerName") ?: ""
-                val offerPrice = document.getDouble("offerPrice") ?: 0.0
+                val offerPrice = document.getLong("offerPrice")?.toInt() ?: 0
                 val imageURL = document.getString("imageURL") ?: ""
                 val status = document.getString("status") ?: ""
 
@@ -94,7 +94,7 @@ class OfferViewModel : ViewModel() {
                 val sellerID = document.getString("sellerID") ?: ""
                 val buyerID = document.getString("buyerID") ?: ""
                 val buyerName = document.getString("buyerName") ?: ""
-                val offerPrice = document.getDouble("offerPrice") ?: 0.0
+                val offerPrice = document.getLong("offerPrice")?.toInt() ?: 0
                 val imageURL = document.getString("imageURL") ?: ""
                 val status = document.getString("status") ?: ""
 

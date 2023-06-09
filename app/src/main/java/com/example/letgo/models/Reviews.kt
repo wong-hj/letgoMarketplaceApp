@@ -5,5 +5,7 @@ data class Reviews(
     var review: String = "",
     var reviewID: String = "",
     var userID: String = "",
+    var userName: String = "",
+    var sellerID: String = "",
     var productID: String = ""
 )

@@ -5,13 +5,17 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -37,7 +41,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import coil.compose.AsyncImage
+import com.example.letgo.models.Offers
 import com.example.letgo.models.Products
+import com.example.letgo.models.Reviews
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -54,6 +60,8 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
 
     val tabTitles = listOf("Listings", "Reviews")
     val selectedTabIndex = remember { mutableStateOf(0) }
+
+    val reviews: List<Reviews> by userVM.reviewsList.observeAsState(emptyList())
 
     Scaffold(
 
@@ -185,7 +193,39 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                     }
                     1 -> {
                         // Show Reviews content
-                        Text(text = "Testing")
+                        LazyColumn {
+                            items(reviews) { item ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 25.dp, vertical = 5.dp)
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = item.userName,
+                                            style = Typography.h3,
+                                            modifier = Modifier.padding(end = 10.dp)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.Star,
+                                            contentDescription = null
+                                        )
+                                        Text(
+                                            text = item.rating.toString(),
+                                            style = Typography.subtitle1
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = item.review,
+                                        style = Typography.subtitle1
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Divider()
+                                }
+
+                            }
+                        }
                     }
                 }
             }

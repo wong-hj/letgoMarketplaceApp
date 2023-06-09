@@ -6,10 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letgo.models.Products
+import com.example.letgo.models.Reviews
 import com.example.letgo.models.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -26,6 +28,8 @@ class ProductDetailsViewModel: ViewModel() {
     private val _currentUser = MutableLiveData<Users>()
     val getCurrentUser: LiveData<Users> = _currentUser
 
+    private val _reviews = MutableLiveData<List<Reviews>>()
+    val reviewsListByProduct: LiveData<List<Reviews>> = _reviews
 //    fun getProduct(documentID: String): LiveData<Products> {
 //        getData(documentID)
 //        Log.d("Firestore", getProduct.toString())
@@ -42,6 +46,12 @@ class ProductDetailsViewModel: ViewModel() {
         viewModelScope.launch {
             _product.value = fetchProduct(documentID)
             Log.d("Firestore123", _product.value.toString())
+        }
+    }
+
+    fun getReviews(productID: String?) {
+        viewModelScope.launch {
+            _reviews.value = fetchReviewsByProduct(productID)
         }
     }
 
@@ -175,18 +185,51 @@ class ProductDetailsViewModel: ViewModel() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         val offer = hashMapOf(
+            "offerID" to "",
             "productID" to productID,
             "buyerID" to userId,
             "imageURL" to imageURL,
             "offerPrice" to offerPrice?.toInt(),
             "productName" to productName,
             "sellerID" to sellerID,
-            "buyerName" to buyerName
+            "buyerName" to buyerName,
+            "status" to "Pending"
         )
 
         db.collection("Offers")
             .add(offer)
             .addOnSuccessListener {
+
+                db.collection("Offers").document(it.id).update("offerID", it.id)
+                callback(true)
+
+            }.addOnFailureListener {
+                // Unlike operation failed
+                callback(false)
+            }
+    }
+
+    fun giveReview(rating: Int?, review: String?, userID: String?, userName: String?, sellerID: String?, offerID: String?, productID: String?, callback: (Boolean) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+
+        val review = hashMapOf(
+            "rating" to rating,
+            "review" to review,
+            "sellerID" to sellerID,
+            "userID" to userID,
+            "userName" to userName,
+            "productID" to productID
+        )
+
+        db.collection("Reviews")
+            .add(review)
+            .addOnSuccessListener {
+
+                db.collection("Reviews").document(it.id).update("reviewID", it.id)
+
+                db.collection("Offers").document(offerID?.trim() ?: "")
+                    .delete()
 
                 callback(true)
 
@@ -194,5 +237,41 @@ class ProductDetailsViewModel: ViewModel() {
                 // Unlike operation failed
                 callback(false)
             }
+
+    }
+
+    suspend fun fetchReviewsByProduct(productID: String?): List<Reviews> {
+        Log.d("TESTING2345", "HERE BRO")
+        val db = FirebaseFirestore.getInstance()
+        val reviewsList = mutableListOf<Reviews>()
+
+        try {
+            val querySnapshot = db.collection("Reviews")
+                .whereEqualTo("productID", productID)
+                .get()
+                .await()
+
+            for (document in querySnapshot) {
+                val productID = document.getString("productID") ?: ""
+                val rating = document.getLong("rating")?.toInt() ?: 0
+                val reviewID = document.getString("reviewID") ?: ""
+                val review = document.getString("review") ?: ""
+                val sellerID = document.getString("sellerID") ?: ""
+                val userID = document.getString("userID") ?: ""
+                val userName = document.getString("userName") ?: ""
+
+                val reviewData = Reviews(rating, review, reviewID, userID, userName, sellerID, productID)
+
+                reviewsList.add(reviewData)
+
+
+            }
+
+            Log.d("TESTING234", "HERE BRO")
+        } catch (e: FirebaseFirestoreException) {
+            Log.d("Firebase", "Error querying offers: ", e)
+        }
+
+        return reviewsList
     }
 }

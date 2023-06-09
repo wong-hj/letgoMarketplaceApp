@@ -6,6 +6,8 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +35,7 @@ import coil.compose.AsyncImage
 import com.example.letgo.R
 import com.example.letgo.models.Offers
 import com.example.letgo.models.Products
+import com.example.letgo.models.Reviews
 import com.example.letgo.models.Users
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.EditProductViewModel
@@ -70,6 +73,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     buyerIdDefaultOffered = buyerIDsArray.contains(currentUser?.userID)
     productIdDefaultOffered = productIDsArray.contains(product?.productID)
 
+    val offerProductID: Offers? = offerProducts.firstOrNull { it.productID == product?.productID }
+
     val userID = product?.userID
 
     vm.getData(documentId.toString())
@@ -94,10 +99,15 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     var isMeetupExpanded by remember { mutableStateOf(true) }
 
     var isDialogVisible by remember { mutableStateOf(false) }
-
+    var isReviewDialogVisible by remember { mutableStateOf(false) }
     var enteredText by remember { mutableStateOf("") }
 
     enteredText = product?.price.toString()
+    var reviewText by remember { mutableStateOf("") }
+    var selectedRating by remember { mutableStateOf(0) }
+    //get reviews
+    vm.getReviews(product?.productID ?: "")
+    val reviews: List<Reviews> by vm.reviewsListByProduct.observeAsState(emptyList())
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -326,7 +336,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     containerColor = Color.White,
                 ),
 
-                ) {
+            ) {
                 Row(modifier = Modifier.padding(16.dp)) {
                     // Circle Image
 
@@ -346,10 +356,60 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     }
                 }
             }
+
+            Divider(
+                color = Color.LightGray,
+                thickness = 1.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+            )
+
+            // Review Section
+            CustomIconText(value = "Reviews", icon = Icons.Default.RateReview)
+
+            if (reviews.isNotEmpty()) {
+                reviews.forEach { item ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp, vertical = 5.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            androidx.compose.material.Text(
+                                text = item.userName,
+                                style = Typography.h3,
+                                modifier = Modifier.padding(end = 10.dp)
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null
+                            )
+                            androidx.compose.material.Text(
+                                text = item.rating.toString(),
+                                style = Typography.subtitle1
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        androidx.compose.material.Text(
+                            text = item.review,
+                            style = Typography.subtitle1
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Divider()
+                    }
+
+                }
+            } else {
+                Text("There are currently no reviews for this product.", style = Typography.subtitle1)
+            }
+
         }
 
+
+        //Bottom Nav Section
         BottomAppBar(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer
             //backgroundColor = Color.White,
             //elevation = 8.dp
@@ -369,23 +429,25 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 )
                 if (productIdDefaultOffered && buyerIdDefaultOffered) {
 
-                    if (offerProducts[0].status == "Accept") {
+                    if ((offerProductID?.status ?: "") == "Accept") {
 
                         Button(
-                            onClick = { /* Handle chat button click */ },
+                            onClick = { isReviewDialogVisible = true },
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                             ) {
                             Text(text = "Give Review")
                         }
-                        
-                    }
-                    Button(
-                        onClick = { /* Handle chat button click */ },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
 
-                    ) {
-                        Text(text = "Offer Sent")
+                    } else {
+                        Button(
+                            onClick = { /* Handle chat button click */ },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+
+                            ) {
+                            Text(text = "Offer Sent")
+                        }
                     }
+
 
 
 
@@ -438,6 +500,78 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                         dismissButton = {
                             Button(
                                 onClick = { isDialogVisible = false },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    )
+                }
+
+                if (isReviewDialogVisible) {
+                    AlertDialog(
+                        onDismissRequest = { isReviewDialogVisible = false },
+                        title = { Text(text = "Give a Review") },
+                        text = {
+                            Column {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = "Rate:")
+                                    for (i in 1..5) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier
+                                                .clickable {
+                                                    selectedRating = i
+                                                    /* Handle rating selection */
+                                                }
+                                        ) {
+                                            RadioButton(
+                                                selected = selectedRating == i,
+                                                onClick = { selectedRating = i },
+                                                colors = RadioButtonDefaults.colors(
+                                                    selectedColor = MaterialTheme.colorScheme.primary
+                                                )
+                                            )
+                                            Text(
+                                                text = i.toString()
+                                            )
+                                        }
+                                    }
+                                }
+
+                                OutlinedTextField(
+                                    value = reviewText,
+                                    onValueChange = { reviewText = it },
+                                    label = { Text(text = "Review") },
+                                    modifier = Modifier.fillMaxWidth().height(100.dp)
+                                )
+
+
+                            }
+
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    // Handle confirm button click
+                                    vm.giveReview(selectedRating, reviewText, currentUser?.userID, currentUser?.name, user?.userID, offerProductID?.offerID, product?.productID) { success ->
+                                        if (success) {
+                                            offerVM.getBuyerOfferData()
+                                            isReviewDialogVisible = false
+                                        }
+
+                                    }
+
+                                }
+                            ) {
+                                Text(text = "Confirm")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = { isReviewDialogVisible = false },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                             ) {
                                 Text(text = "Cancel")

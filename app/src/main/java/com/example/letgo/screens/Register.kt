@@ -51,6 +51,7 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
     var fullName = remember { mutableStateOf("") }
     var university = remember { mutableStateOf("") }
     var studentID = remember { mutableStateOf("") }
+    var contact = remember { mutableStateOf("") }
 
     var validateName by rememberSaveable { mutableStateOf(true) }
     var validateEmail by rememberSaveable { mutableStateOf(true) }
@@ -58,6 +59,7 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
     var validatePassword by rememberSaveable { mutableStateOf(true) }
     var validateUniversity by rememberSaveable { mutableStateOf(true) }
     var validateStudentID by rememberSaveable { mutableStateOf(true) }
+    var validateContact by rememberSaveable { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -79,8 +81,9 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
         validateCfmPassword = cfmPassword.value.isNotBlank() && password.value == cfmPassword.value
         validateUniversity = university.value.isNotBlank()
         validateStudentID = studentID.value.isNotBlank()
+        validateContact = contact.value.isNotBlank()
 
-        return validateEmail && validateName && validatePassword && validateCfmPassword && validateUniversity && validateStudentID
+        return validateEmail && validateName && validatePassword && validateCfmPassword && validateUniversity && validateStudentID && validateContact
     }
 
     Column(
@@ -168,6 +171,16 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
             leadingIconImageVector = Icons.Default.Badge
         )
 
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CustomOutlinedTextField(
+            value = contact.value,
+            onValueChangeFun = {contact.value = it},
+            labelText = "Contact Number",
+            showError = !validateContact,
+            leadingIconImageVector = Icons.Default.Call
+        )
+
         Spacer(modifier = Modifier.height(50.dp))
 
         var isLoading by remember { mutableStateOf(false) }
@@ -179,7 +192,7 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
                 scope.launch {
                     isLoading = true
                     if(validateData()) {
-                        var data = vm.signUp(email.value, password.value, fullName.value, university.value, studentID.value, context)
+                        var data = vm.signUp(email.value, password.value, fullName.value, university.value, studentID.value, contact.value, context)
 
                         if(data) {
 

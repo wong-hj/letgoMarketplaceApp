@@ -353,6 +353,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                         Text(text = user?.name ?: "", style = Typography.subtitle1)
                         Text(text = user?.university ?: "", style = Typography.subtitle2)
                         Text(text = user?.studentID ?: "", style = Typography.subtitle2)
+                        Text(text = user?.contact ?: "", style = Typography.subtitle2)
                     }
                 }
             }
@@ -376,22 +377,23 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                             .padding(horizontal = 25.dp, vertical = 5.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            androidx.compose.material.Text(
+                            Text(
                                 text = item.userName,
                                 style = Typography.h3,
                                 modifier = Modifier.padding(end = 10.dp)
                             )
                             Icon(
                                 imageVector = Icons.Default.Star,
+                                tint = Color.Yellow,
                                 contentDescription = null
                             )
-                            androidx.compose.material.Text(
+                            Text(
                                 text = item.rating.toString(),
                                 style = Typography.subtitle1
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
-                        androidx.compose.material.Text(
+                        Text(
                             text = item.review,
                             style = Typography.subtitle1
                         )

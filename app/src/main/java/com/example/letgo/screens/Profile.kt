@@ -2,8 +2,8 @@ package com.example.letgo.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import android.util.Patterns
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -11,17 +11,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,15 +36,21 @@ import com.example.letgo.widgets.CustomHeader
 import com.google.android.play.integrity.internal.y
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.letgo.models.Offers
 import com.example.letgo.models.Products
 import com.example.letgo.models.Reviews
+import com.example.letgo.rememberImeState
+import com.example.letgo.widgets.CustomOutlinedTextField
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -62,6 +69,7 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
     val selectedTabIndex = remember { mutableStateOf(0) }
 
     val reviews: List<Reviews> by userVM.reviewsList.observeAsState(emptyList())
+
 
     Scaffold(
 
@@ -87,7 +95,11 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                             .offset(y = 10.dp)
                             .clickable {
                                 auth.signOut()
-                                navController.popBackStack(Routes.Login.route, inclusive = false, saveState = false)
+                                navController.popBackStack(
+                                    Routes.Login.route,
+                                    inclusive = false,
+                                    saveState = false
+                                )
                             }
                     )
                 }
@@ -101,8 +113,22 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                 )
 
                 Spacer(modifier = Modifier.height(15.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = user.name, style = Typography.h3)
 
-                Text(text = user.name, style = Typography.h3)
+                    IconButton(
+                        onClick = { navController.navigate(Routes.EditUser.route) },
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = Color.Black,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
                 Text(text = user.university, style = Typography.subtitle1)
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -177,7 +203,7 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                                                 .fillMaxSize(),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            androidx.compose.material3.Text(
+                                            Text(
                                                 text = text,
                                                 modifier = Modifier.align(Alignment.Center),
                                                 textAlign = TextAlign.Center,
@@ -193,38 +219,43 @@ fun Profile(navController : NavHostController, userVM: UserViewModel = viewModel
                     }
                     1 -> {
                         // Show Reviews content
-                        LazyColumn {
-                            items(reviews) { item ->
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 25.dp, vertical = 5.dp)
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (reviews.isNotEmpty()) {
+                            LazyColumn {
+                                items(reviews) { item ->
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 25.dp, vertical = 5.dp)
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                text = item.userName,
+                                                style = Typography.h3,
+                                                modifier = Modifier.padding(end = 10.dp)
+                                            )
+                                            Icon(
+                                                imageVector = Icons.Default.Star,
+                                                tint = Color.Yellow,
+                                                contentDescription = null
+                                            )
+                                            Text(
+                                                text = item.rating.toString(),
+                                                style = Typography.subtitle1
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Text(
-                                            text = item.userName,
-                                            style = Typography.h3,
-                                            modifier = Modifier.padding(end = 10.dp)
-                                        )
-                                        Icon(
-                                            imageVector = Icons.Default.Star,
-                                            contentDescription = null
-                                        )
-                                        Text(
-                                            text = item.rating.toString(),
+                                            text = item.review,
                                             style = Typography.subtitle1
                                         )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Divider()
                                     }
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = item.review,
-                                        style = Typography.subtitle1
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Divider()
-                                }
 
+                                }
                             }
+                        } else {
+                            Text("There are currently no reviews.", style = Typography.subtitle1)
                         }
                     }
                 }

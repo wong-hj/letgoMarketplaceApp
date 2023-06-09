@@ -7,5 +7,7 @@ data class Users(
     var email: String = "",
     var university: String = "",
     var studentID: String = "",
-    var likedProducts: List<String>? = emptyList()
+    var likedProducts: List<String>? = emptyList(),
+    var contact: String = ""
+
 )

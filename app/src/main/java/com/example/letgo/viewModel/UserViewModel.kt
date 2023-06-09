@@ -24,7 +24,6 @@ import kotlinx.coroutines.tasks.await
 
 class UserViewModel : ViewModel() {
 
-
     val state = mutableStateOf(Users())
 
     private val _userListings = MutableLiveData<List<Products>>()

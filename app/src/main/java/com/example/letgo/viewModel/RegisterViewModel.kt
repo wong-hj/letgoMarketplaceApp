@@ -22,6 +22,7 @@ class RegisterViewModel(): ViewModel() {
         name: String,
         university: String,
         studentID: String,
+        contact: String,
         context: android.content.Context
     ): Boolean {
         return try {
@@ -35,7 +36,7 @@ class RegisterViewModel(): ViewModel() {
 
             val dbUsers: DocumentReference = db.collection("Users").document(uid ?: "")
 
-            val userDetails = Users(uid ?: "", name,email,university,studentID, emptyList())
+            val userDetails = Users(uid ?: "", name,email,university,studentID, emptyList(), contact)
 
             dbUsers.set(userDetails).addOnSuccessListener {
 

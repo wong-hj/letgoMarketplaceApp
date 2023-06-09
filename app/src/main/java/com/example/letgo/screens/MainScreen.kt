@@ -51,5 +51,9 @@ fun MainScreen() {
             ProductDetails(navController = navController)
         }
 
+        composable(Routes.EditUser.route) {
+            EditUser(navController = navController)
+        }
+
     }
 }

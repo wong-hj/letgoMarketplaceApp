@@ -33,9 +33,9 @@ class MainActivity : ComponentActivity() {
                     //AddProduct()
                     //Login()
                     //Register()
-                    //MainScreen()
+                    MainScreen()
                     //ProductDetails()
-                    Offer()
+                    //Offer()
                 }
             }
         }
@@ -52,8 +52,8 @@ fun DefaultPreview() {
         //Login()
         //Register()
         //AddProduct()
-        //MainScreen()
+        MainScreen()
         //ProductDetails()
-        Offer()
+        //Offer()
     }
 }

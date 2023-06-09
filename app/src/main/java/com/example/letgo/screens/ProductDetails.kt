@@ -31,11 +31,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.letgo.R
+import com.example.letgo.models.Offers
 import com.example.letgo.models.Products
 import com.example.letgo.models.Users
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.EditProductViewModel
 import com.example.letgo.viewModel.LikedViewModel
+import com.example.letgo.viewModel.OfferViewModel
 import com.example.letgo.viewModel.ProductDetailsViewModel
 import com.example.letgo.widgets.*
 import com.google.android.gms.maps.model.CameraPosition
@@ -47,14 +49,26 @@ import com.google.type.LatLng
 
 
 @Composable
-fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel = viewModel(), editVM: EditProductViewModel = viewModel()) {
+fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel = viewModel(), offerVM: OfferViewModel = viewModel()) {
 
     val arguments = navController.currentBackStackEntry?.arguments
     val documentId = arguments?.getString("productID")
 
     val user by vm.getUser.observeAsState()
+
     val currentUser by vm.getCurrentUser.observeAsState()
+
+
     val product by vm.getData.observeAsState()
+
+    var buyerIdDefaultOffered  by remember { mutableStateOf(false) }
+    var productIdDefaultOffered by remember { mutableStateOf(false) }
+    val offerProducts: List<Offers> by offerVM.buyerOfferProducts.observeAsState(emptyList())
+    val buyerIDsArray: Array<String> = offerProducts.map { it.buyerID }.toTypedArray()
+    val productIDsArray: Array<String> = offerProducts.map { it.productID }.toTypedArray()
+
+    buyerIdDefaultOffered = buyerIDsArray.contains(currentUser?.userID)
+    productIdDefaultOffered = productIDsArray.contains(product?.productID)
 
     val userID = product?.userID
 
@@ -78,6 +92,12 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     var isSpecificationExpanded by remember { mutableStateOf(true) }
 
     var isMeetupExpanded by remember { mutableStateOf(true) }
+
+    var isDialogVisible by remember { mutableStateOf(false) }
+
+    var enteredText by remember { mutableStateOf("") }
+
+    enteredText = product?.price.toString()
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -347,13 +367,80 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     style = Typography.h2,
                     modifier = Modifier.weight(1f)
                 )
+                if (productIdDefaultOffered && buyerIdDefaultOffered) {
 
-                Button(
-                    onClick = { /* Handle chat button click */ },
-                    //modifier = Modifier.padding(end = 8.dp)
-                ) {
-                    Text(text = "Chat")
+                    Button(
+                        
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+
+                        ) {
+                        Text(text = "Offer Sent")
+                    }
+
+                } else {
+                    if(currentUser?.userID != user?.userID) {
+
+                        Button(
+                            onClick = { isDialogVisible = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        ) {
+                            Text(text = "Make Offer")
+                        }
+                    }
                 }
+
+//                Button(
+//                    onClick = { /* Handle chat button click */ },
+//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
+//
+//                    ) {
+//                    Text(text = "Give Review")
+//                }
+
+                if (isDialogVisible) {
+                    AlertDialog(
+                        onDismissRequest = { isDialogVisible = false },
+                        title = { Text(text = "Make An Offer") },
+                        text = {
+                            OutlinedTextField(
+                                value = enteredText,
+                                onValueChange = { enteredText = it },
+                                label = { Text(text = "Offer") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    // Handle confirm button click
+                                    vm.makeOffer(product?.productID, product?.imageURL, enteredText, product?.name, user?.userID, currentUser?.name) { success ->
+                                        if (success) {
+                                            offerVM.getBuyerOfferData()
+                                            isDialogVisible = false
+                                        }
+
+                                    }
+
+
+                                    // Access the entered text via the 'enteredText' variable
+
+                                }
+                            ) {
+                                Text(text = "Confirm")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = { isDialogVisible = false },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    )
+                }
+
+
 
                 IconButton(
                     onClick = {

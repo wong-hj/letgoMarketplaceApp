@@ -167,4 +167,32 @@ class ProductDetailsViewModel: ViewModel() {
                 callback(false)
             }
     }
+
+    fun makeOffer(productID: String?, imageURL: String?, offerPrice: String?, productName: String?, sellerID: String?, userName: String?, callback: (Boolean) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        val offer = hashMapOf(
+            "productID" to productID,
+            "buyerID" to userId,
+            "imageURL" to imageURL,
+            "offerPrice" to offerPrice?.toInt(),
+            "productName" to productName,
+            "sellerID" to sellerID,
+            "userName" to userName
+        )
+
+        db.collection("Offers")
+            .add(offer)
+            .addOnSuccessListener {
+
+                callback(true)
+
+            }.addOnFailureListener {
+                // Unlike operation failed
+                callback(false)
+            }
+    }
 }

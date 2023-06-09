@@ -31,7 +31,7 @@ fun MainScreen() {
 
         composable(Routes.Offer.route) {
             Offer(
-                //navController = navController
+                navController = navController
             )
         }
 

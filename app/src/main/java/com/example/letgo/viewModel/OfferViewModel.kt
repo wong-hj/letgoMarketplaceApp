@@ -53,15 +53,17 @@ class OfferViewModel : ViewModel() {
                 .await()
 
             for (document in querySnapshot) {
+                val offerID = document.getString("offerID") ?: ""
                 val productID = document.getString("productID") ?: ""
                 val productName = document.getString("productName") ?: ""
                 val sellerID = document.getString("sellerID") ?: ""
                 val buyerID = document.getString("buyerID") ?: ""
-                val userName = document.getString("userName") ?: ""
+                val buyerName = document.getString("buyerName") ?: ""
                 val offerPrice = document.getDouble("offerPrice") ?: 0.0
                 val imageURL = document.getString("imageURL") ?: ""
+                val status = document.getString("status") ?: ""
 
-                val offer = Offers(productID, productName, sellerID, buyerID, userName, offerPrice, imageURL)
+                val offer = Offers(offerID, productID, productName, sellerID, buyerID, buyerName, offerPrice, imageURL, status)
                 offersList.add(offer)
             }
 
@@ -86,16 +88,21 @@ class OfferViewModel : ViewModel() {
                 .await()
 
             for (document in querySnapshot) {
+                val offerID = document.getString("offerID") ?: ""
                 val productID = document.getString("productID") ?: ""
                 val productName = document.getString("productName") ?: ""
                 val sellerID = document.getString("sellerID") ?: ""
                 val buyerID = document.getString("buyerID") ?: ""
-                val userName = document.getString("userName") ?: ""
+                val buyerName = document.getString("buyerName") ?: ""
                 val offerPrice = document.getDouble("offerPrice") ?: 0.0
                 val imageURL = document.getString("imageURL") ?: ""
+                val status = document.getString("status") ?: ""
 
-                val offer = Offers(productID, productName, sellerID, buyerID, userName, offerPrice, imageURL)
+
+                val offer = Offers(offerID, productID, productName, sellerID, buyerID, buyerName, offerPrice, imageURL, status)
                 offersList.add(offer)
+
+
             }
 
             Log.d("TESTING234", "HERE BRO")
@@ -104,6 +111,22 @@ class OfferViewModel : ViewModel() {
         }
 
         return offersList
+    }
+
+    fun acceptOffer(offerID: String) {
+        Log.d("HAHAAO", offerID)
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Offers").document(offerID.trim())
+            .update("status", "Accept")
+        Log.d("HAHAAOO", "NO")
+    }
+
+    fun denyOffer(offerID: String) {
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Offers").document(offerID.trim())
+            .delete()
+
     }
 
 

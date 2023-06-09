@@ -168,7 +168,7 @@ class ProductDetailsViewModel: ViewModel() {
             }
     }
 
-    fun makeOffer(productID: String?, imageURL: String?, offerPrice: String?, productName: String?, sellerID: String?, userName: String?, callback: (Boolean) -> Unit) {
+    fun makeOffer(productID: String?, imageURL: String?, offerPrice: String?, productName: String?, sellerID: String?, buyerName: String?, callback: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
 
@@ -181,7 +181,7 @@ class ProductDetailsViewModel: ViewModel() {
             "offerPrice" to offerPrice?.toInt(),
             "productName" to productName,
             "sellerID" to sellerID,
-            "userName" to userName
+            "buyerName" to buyerName
         )
 
         db.collection("Offers")

@@ -369,6 +369,16 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 )
                 if (productIdDefaultOffered && buyerIdDefaultOffered) {
 
+                    if (offerProducts[0].status == "Accept") {
+
+                        Button(
+                            onClick = { /* Handle chat button click */ },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
+                            ) {
+                            Text(text = "Give Review")
+                        }
+                        
+                    }
                     Button(
                         onClick = { /* Handle chat button click */ },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
@@ -376,6 +386,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     ) {
                         Text(text = "Offer Sent")
                     }
+
+
 
                 } else {
                     if(currentUser?.userID != user?.userID) {
@@ -389,13 +401,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     }
                 }
 
-//                Button(
-//                    onClick = { /* Handle chat button click */ },
-//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
-//
-//                    ) {
-//                    Text(text = "Give Review")
-//                }
+
 
                 if (isDialogVisible) {
                     AlertDialog(

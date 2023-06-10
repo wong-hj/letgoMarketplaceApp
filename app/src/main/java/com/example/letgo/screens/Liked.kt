@@ -58,7 +58,10 @@ fun Liked(navController: NavHostController, likeVM: LikedViewModel = viewModel()
                                     )
                                 },
                                 modifier = Modifier
-                                    .size(width = 180.dp, height = 200.dp)
+                                    .size(width = 180.dp, height = 200.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                )
                             ) {
 
                                 AsyncImage(

@@ -173,6 +173,7 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                                     }
 
                                 } else {
+
                                     Card(
                                         onClick = {
                                             navController.navigate(
@@ -181,7 +182,10 @@ fun HomePage(navController: NavHostController, productVM: HomePageViewModel = vi
                                         },
                                         modifier = Modifier
                                             .size(width = 180.dp, height = 200.dp)
-                                            .align(Alignment.CenterHorizontally)
+                                            .align(Alignment.CenterHorizontally),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        )
                                     ) {
 
                                         AsyncImage(

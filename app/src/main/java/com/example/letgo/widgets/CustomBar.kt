@@ -49,17 +49,16 @@ fun CustomBottomBar(navController: NavController) {
         BottomBar.Profile
     )
     BottomNavigation(
-
+        backgroundColor = MaterialTheme.colorScheme.surface
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon((item.icon), contentDescription = item.title, tint = MaterialTheme.colorScheme.background) },
-                label = { Text(text = item.title, style = Typography.body2, color = MaterialTheme.colorScheme.background) },
-                selectedContentColor = Color.Black,
-                //MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.background.copy(0.4f),
+                icon = { Icon((item.icon), contentDescription = item.title, tint = MaterialTheme.colorScheme.primary) },
+                label = { Text(text = item.title, style = Typography.body2, color = MaterialTheme.colorScheme.primary) },
+                selectedContentColor = MaterialTheme.colorScheme.primaryContainer,
+                unselectedContentColor = MaterialTheme.colorScheme.primaryContainer.copy(0.4f),
                 alwaysShowLabel = true,
                 selected = currentRoute == item.route,
                 onClick = {

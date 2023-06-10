@@ -9,7 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 
 class AddProductViewModel : ViewModel() {
 
-    fun addProduct(image: Uri, name: String, description: String, brand: String, quality: String, location: String, price: String) {
+    fun addProduct(image: Uri?, name: String, description: String, brand: String, quality: String, location: String, price: String) {
 
         val db = FirebaseFirestore.getInstance()
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -31,26 +31,29 @@ class AddProductViewModel : ViewModel() {
                 db.collection("Products").document(documentReference.id)
                     .update("productID", documentReference.id)
                 Log.d("SuccessAdd", "Product added with ID: ${documentReference.id}")
+                
+                if(image != null) {
+                    val storage = FirebaseStorage.getInstance()
+                    val storageRef = storage.reference.child("images/${documentReference.id}.jpg")
 
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.reference.child("images/${documentReference.id}.jpg")
+                    val uploadTask = storageRef.putFile(image)
 
-                val uploadTask = storageRef.putFile(image)
+                    uploadTask.addOnSuccessListener {
+                        // Image upload successful
 
-                uploadTask.addOnSuccessListener {
-                    // Image upload successful
+                        storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                            val imageUrl = downloadUrl.toString()
 
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                        val imageUrl = downloadUrl.toString()
+                            db.collection("Products").document(documentReference.id)
+                                .update("imageURL", imageUrl)
 
-                        db.collection("Products").document(documentReference.id)
-                            .update("imageURL", imageUrl)
-
+                        }
+                    }.addOnFailureListener { exception ->
+                        // Handle the image upload failure case
+                        Log.e("ImageUploadError", "Error uploading image", exception)
                     }
-                }.addOnFailureListener { exception ->
-                    // Handle the image upload failure case
-                    Log.e("ImageUploadError", "Error uploading image", exception)
                 }
+
             }
 
 

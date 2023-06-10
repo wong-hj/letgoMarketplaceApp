@@ -260,7 +260,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
                             isLoading = true
 
                             vm.addProduct(
-                                selectedImageUri!!,
+                                selectedImageUri,
                                 name,
                                 description,
                                 brand,

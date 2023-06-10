@@ -72,10 +72,10 @@ class EditProductViewModel : ViewModel() {
                                     val documentRef = db.collection("Reviews").document(document.id)
                                     documentRef.delete()
                                         .addOnSuccessListener {
-                                            Log.d("Delete", "Delete successfully")
+                                            Log.d("Delete1", "Delete successfully")
                                         }
                                         .addOnFailureListener { exception ->
-                                            Log.e("Delete", "Error updating review", exception)
+                                            Log.e("Delete1", "Error updating review", exception)
                                         }
                                 }
                             }
@@ -84,27 +84,27 @@ class EditProductViewModel : ViewModel() {
                             }
 
                         val usersCollectionRef = db.collection("Users")
-                            usersCollectionRef.get()
-                                .addOnSuccessListener { querySnapshot ->
+                        usersCollectionRef.get()
+                            .addOnSuccessListener { querySnapshot ->
 
-                                val batch = db.batch()
-                                for (userDoc in querySnapshot.documents) {
-                                    // Remove the product ID from the likedProducts array field
-                                    val userRef = usersCollectionRef.document(userDoc.id)
-                                    batch.update(userRef, "likedProducts", FieldValue.arrayRemove(productID))
+                            val batch = db.batch()
+                            for (userDoc in querySnapshot.documents) {
+                                // Remove the product ID from the likedProducts array field
+                                val userRef = usersCollectionRef.document(userDoc.id)
+                                batch.update(userRef, "likedProducts", FieldValue.arrayRemove(productID))
+                            }
+
+                            batch.commit()
+                                .addOnSuccessListener {
+                                    // The product ID was successfully removed from all users' likedProducts arrays
+                                    Log.d("RemoveProduct", "Product removed from all users successfully")
+                                }
+                                .addOnFailureListener { exception ->
+                                    // An error occurred while removing the product ID from users' likedProducts arrays
+                                    Log.e("RemoveProduct", "Error removing product from users", exception)
                                 }
 
-                                batch.commit()
-                                    .addOnSuccessListener {
-                                        // The product ID was successfully removed from all users' likedProducts arrays
-                                        Log.d("RemoveProduct", "Product removed from all users successfully")
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        // An error occurred while removing the product ID from users' likedProducts arrays
-                                        Log.e("RemoveProduct", "Error removing product from users", exception)
-                                    }
-
-                            }
+                        }
 
                     }
                     .addOnFailureListener { e ->

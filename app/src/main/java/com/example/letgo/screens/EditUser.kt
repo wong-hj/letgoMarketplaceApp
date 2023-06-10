@@ -19,16 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.EditUserViewModel
-import com.example.letgo.viewModel.UserViewModel
 import com.example.letgo.widgets.CustomButton
-import com.example.letgo.widgets.CustomHeader
 import com.example.letgo.widgets.CustomOutlinedTextField
 import kotlinx.coroutines.launch
 
@@ -39,6 +35,7 @@ fun EditUser(navController: NavHostController, editVM: EditUserViewModel = viewM
 
 
     val user by editVM.getUser.observeAsState()
+
     //For Edit
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

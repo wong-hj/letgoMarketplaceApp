@@ -40,57 +40,51 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
     val documentId = arguments?.getString("productID")
 
     val user by vm.getUser.observeAsState()
-
     val currentUser by vm.getCurrentUser.observeAsState()
-
-
     val product by vm.getData.observeAsState()
-
-    var buyerIdDefaultOffered  by remember { mutableStateOf(false) }
-    var productIdDefaultOffered by remember { mutableStateOf(false) }
     val offerProducts: List<Offers> by offerVM.buyerOfferProducts.observeAsState(emptyList())
+
+
     val buyerIDsArray: Array<String> = offerProducts.map { it.buyerID }.toTypedArray()
     val productIDsArray: Array<String> = offerProducts.map { it.productID }.toTypedArray()
 
+    var buyerIdDefaultOffered  by remember { mutableStateOf(false) }
+    var productIdDefaultOffered by remember { mutableStateOf(false) }
     buyerIdDefaultOffered = buyerIDsArray.contains(currentUser?.userID)
     productIdDefaultOffered = productIDsArray.contains(product?.productID)
 
     val offerProductID: Offers? = offerProducts.firstOrNull { it.productID == product?.productID }
 
     val userID = product?.userID
+    val addressMap = product?.location
 
     vm.getData(documentId.toString())
+    vm.getCurrentUser()
 
+    //get reviews
+    vm.getReviews(product?.productID ?: "")
     if (userID != null) {
         vm.getProductUser(userID)
     }
-    vm.getCurrentUser()
-    var productDefaultLiked  by remember { mutableStateOf(false) }
 
+    var productDefaultLiked  by remember { mutableStateOf(false) }
     productDefaultLiked = currentUser?.likedProducts?.contains(product?.productID) == true
 
-    val addressMap = product?.location
-
     var likeCounter by remember { mutableStateOf(-1) }
-
     likeCounter = product?.likes ?: 0
 
-    val context = LocalContext.current
     var isSpecificationExpanded by remember { mutableStateOf(true) }
-
     var isMeetupExpanded by remember { mutableStateOf(true) }
-
     var isDialogVisible by remember { mutableStateOf(false) }
     var isReviewDialogVisible by remember { mutableStateOf(false) }
     var enteredText by remember { mutableStateOf("") }
-
     enteredText = product?.price.toString()
     var reviewText by remember { mutableStateOf("") }
     var selectedRating by remember { mutableStateOf(0) }
-    //get reviews
-    vm.getReviews(product?.productID ?: "")
+
     val reviews: List<Reviews> by vm.reviewsListByProduct.observeAsState(emptyList())
 
+    val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxWidth()
         .verticalScroll(rememberScrollState())) {
@@ -100,7 +94,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
         ) {
             // Image
             AsyncImage(
-                //model = "https://firebasestorage.googleapis.com/v0/b/letgo-b3706.appspot.com/o/images%2FLego%20Gun.jpg?alt=media&token=35edb901-233c-43be-86e1-aef54cedd304&_gl=1*1tb4zfb*_ga*MTM3MDUyNzAyOC4xNjg0NTg1OTU1*_ga_CW55HF8NVT*MTY4NjE0OTI4Ny4xMi4wLjE2ODYxNDkyODcuMC4wLjA.",
                 model = product?.imageURL,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -134,13 +127,12 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             .padding(16.dp)) {
             // Title
             Text(
-                //text = "Dog",
                 text = product?.name ?: "",
                 color = Color.Black,
                 style = Typography.h2
             )
-            //Likes
 
+            //Likes
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
@@ -149,7 +141,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = if(likeCounter > 0) { "$likeCounter like this" } else { "0 like this" },
+                    text = if(likeCounter > 0) { "$likeCounter likes this" } else { "0 likes this" },
                     color = Color.DarkGray,
                     style = Typography.subtitle1,
                     modifier = Modifier.padding(start = 8.dp)
@@ -160,7 +152,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
             CustomIconText(value = "Description", icon = Icons.Default.Subject)
 
             Text(
-                //text = "DESC",
                 text = product?.description ?: "",
                 color = Color.DarkGray,
                 style = Typography.subtitle2
@@ -173,6 +164,7 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
+
             // Specification Section
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)) {
 
@@ -313,7 +305,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                     .padding(vertical = 8.dp)
             )
 
-
             CustomIconText(value = "Seller", icon = Icons.Default.Storefront)
 
             Card(
@@ -326,8 +317,8 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
 
             ) {
                 Row(modifier = Modifier.padding(16.dp)) {
-                    // Circle Image
 
+                    // Circle Image
                     Image(
                         painter = painterResource(id = R.drawable.user),
                         contentDescription = "User Image",
@@ -401,8 +392,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
         BottomAppBar(
             modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer
-            //backgroundColor = Color.White,
-            //elevation = 8.dp
         ) {
             Row(
                 modifier = Modifier
@@ -412,7 +401,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    // = "RM 699",
                     text = "RM ${product?.price.toString()}",
                     style = Typography.h2,
                     modifier = Modifier.weight(1f)
@@ -478,9 +466,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                                         }
 
                                     }
-
-
-                                    // Access the entered text via the 'enteredText' variable
 
                                 }
                             ) {
@@ -608,7 +593,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                         contentDescription = "Love Icon",
                         tint = Color.Red
                     )
-
                 }
             }
         }

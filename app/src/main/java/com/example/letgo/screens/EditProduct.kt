@@ -2,8 +2,6 @@ package com.example.letgo.screens
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,7 +17,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,14 +34,12 @@ import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomOutlinedTextField
 import com.example.letgo.widgets.CustomTextArea
 import kotlinx.coroutines.launch
-import org.checkerframework.checker.units.qual.s
-import kotlin.math.absoluteValue
-
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProduct(navController: NavHostController, vm: EditProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
+
     val arguments = navController.currentBackStackEntry?.arguments
     val documentId = arguments?.getString("productID")
 
@@ -62,13 +57,12 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
     //dropdown
     val qualityOptions = listOf("Brand New", "Like New", "Light Used", "Heavy Used")
-    //val defaultQuality = "Quality"
     var selectedQuality by remember { mutableStateOf(qualityOptions[0]) }
     var expanded by remember { mutableStateOf(false) }
 
+    //Scroll State
     val imeState = rememberImeState()
     val scrollState = rememberScrollState()
-
 
     LaunchedEffect(key1 = imeState.value) {
         if (imeState.value) {
@@ -76,6 +70,7 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
         }
     }
 
+    //Select Image
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -85,6 +80,7 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
         onResult = { uri -> selectedImageUri = uri }
     )
 
+    //Replace current product with empty fields
     LaunchedEffect(Unit) {
         product?.let {
             name = it.name
@@ -123,7 +119,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                 modifier = Modifier.weight(1f)
             )
 
-
             IconButton(
                 onClick = {
                     openDialog.value = true
@@ -142,9 +137,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
 
             AlertDialog(
                 onDismissRequest = {
-                    // Dismiss the dialog when the user clicks outside the dialog or on the back
-                    // button. If you want to disable that functionality, simply use an empty
-                    // onCloseRequest.
                     openDialog.value = false
                 },
                 title = {
@@ -157,7 +149,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                     Button(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         onClick = {
-
 
                             product?.let { vm.deleteProduct(it.productID, it.productID) }
                             openDialog.value = false
@@ -313,21 +304,6 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                 btnColor = MaterialTheme.colorScheme.tertiary,
                 onClickFun = {
 
-//                    val updateName = name.value.ifBlank {
-//                        product?.name ?: ""
-//                    }
-//                    val updateDesc = description.value.ifBlank {
-//                        product?.description ?: ""
-//                    }
-//                    val updateBrand = brand.value.ifBlank {
-//                        product?.brand ?: ""
-//                    }
-//                    val updateLocation = location.value.ifBlank {
-//                        product?.location ?: ""
-//                    }
-//                    val updatePrice = price.value.ifBlank {
-//                        product?.price.toString()
-//                    }
                     scope.launch {
 
                             vm.updateProduct(

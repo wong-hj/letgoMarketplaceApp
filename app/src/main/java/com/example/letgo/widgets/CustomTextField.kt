@@ -1,13 +1,9 @@
 package com.example.letgo.widgets
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
-//import androidx.compose.material.*
 import androidx.compose.material3.*
-import androidx.compose.material.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
@@ -17,12 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.letgo.ui.theme.Typography
-import kotlin.text.Typography
 
 @Composable
 fun CustomOutlinedTextField(
@@ -85,13 +79,6 @@ fun CustomOutlinedTextField(
             keyboardOptions = keyboardOptions,
         )
         if(showError) {
-
-//            Text(
-//                text = errorMessage,
-//                color = MaterialTheme.colorScheme.error,
-//                //style = MaterialTheme.typography.caption,
-//                modifier = Modifier.offset(y = (5).dp).align(Alignment.Start)
-//            )
 
         }
     }

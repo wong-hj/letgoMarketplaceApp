@@ -45,7 +45,6 @@ class LikedViewModel : ViewModel() {
                 }
             }
         }
-
         return products
     }
 

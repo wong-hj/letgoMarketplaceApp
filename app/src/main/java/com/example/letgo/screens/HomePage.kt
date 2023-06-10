@@ -1,7 +1,6 @@
 package com.example.letgo.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -16,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
@@ -25,19 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.letgo.R
 import com.example.letgo.models.Products
 import com.example.letgo.nav.Routes
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.HomePageViewModel
 import com.example.letgo.widgets.CustomBottomBar
-import com.example.letgo.widgets.CustomHeader
-import androidx.lifecycle.viewModelScope
-import com.example.letgo.viewModel.LikedViewModel
 import com.example.letgo.viewModel.UserViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState

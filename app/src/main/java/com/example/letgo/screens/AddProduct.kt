@@ -1,9 +1,6 @@
 package com.example.letgo.screens
 
-import android.graphics.Paint
-import android.hardware.camera2.params.BlackLevelPattern
 import android.net.Uri
-import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -11,56 +8,33 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontVariation.width
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.letgo.models.Products
-import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
 import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.AddProductViewModel
-import com.example.letgo.viewModel.HomePageViewModel
-import com.example.letgo.viewModel.LikedViewModel
-import com.example.letgo.viewModel.LoginViewModel
 import com.example.letgo.widgets.*
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewModel(), productVM: HomePageViewModel = viewModel()) {
+fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewModel()) {
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -95,6 +69,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
         }
     }
 
+    //Select Image
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
     }
@@ -104,6 +79,7 @@ fun AddProduct(navController: NavHostController, vm: AddProductViewModel = viewM
         onResult = { uri -> selectedImageUri = uri }
     )
 
+    //Validate Field
     fun validateData(): Boolean {
 
         validateName = name.isNotBlank()

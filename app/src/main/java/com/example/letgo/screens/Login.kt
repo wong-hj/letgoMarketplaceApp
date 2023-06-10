@@ -1,30 +1,24 @@
 package com.example.letgo.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.foundation.layout.ColumnScopeInstance.align
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,7 +30,6 @@ import androidx.navigation.NavHostController
 import com.example.letgo.R
 import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
-import com.example.letgo.ui.theme.Typography
 import com.example.letgo.viewModel.LoginViewModel
 import com.example.letgo.widgets.CustomButton
 import com.example.letgo.widgets.CustomDialogClose
@@ -62,7 +55,6 @@ fun Login( navController: NavHostController, vm:LoginViewModel = viewModel() ){
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        //verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
     ) {
 
@@ -148,7 +140,6 @@ fun Login( navController: NavHostController, vm:LoginViewModel = viewModel() ){
 
             ClickableText(
                 text = AnnotatedString("Register Here."),
-                //modifier = Modifier.padding(20.dp),
                 onClick = {
                     navController.navigate(Routes.Register.route)
                 },

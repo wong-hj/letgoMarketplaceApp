@@ -1,14 +1,10 @@
 package com.example.letgo.viewModel
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.letgo.models.Users
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase

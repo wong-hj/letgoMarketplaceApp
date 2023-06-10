@@ -1,12 +1,9 @@
 package com.example.letgo.screens
 
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -18,21 +15,16 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.letgo.R
 import com.example.letgo.nav.Routes
 import com.example.letgo.rememberImeState
 import com.example.letgo.viewModel.RegisterViewModel
@@ -96,7 +88,6 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
         CustomHeader(
             value = "Register"
         )
-
 
         CustomOutlinedTextField(
             value = email.value,
@@ -209,9 +200,7 @@ fun Register(navController : NavHostController, vm: RegisterViewModel = viewMode
                     isLoading = false
                 }
             }
-
         )
-
 
         Spacer(modifier = Modifier.height(10.dp))
 

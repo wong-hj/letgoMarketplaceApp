@@ -6,13 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letgo.models.Offers
-import com.example.letgo.models.Products
-import com.example.letgo.models.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -41,7 +37,7 @@ class OfferViewModel : ViewModel() {
     }
 
     suspend fun fetchOfferProducts(): List<Offers> {
-        Log.d("TESTING2345", "HERE BRO")
+
         val db = FirebaseFirestore.getInstance()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid
         val offersList = mutableListOf<Offers>()
@@ -67,7 +63,6 @@ class OfferViewModel : ViewModel() {
                 offersList.add(offer)
             }
 
-            Log.d("TESTING234", "HERE BRO")
         } catch (e: FirebaseFirestoreException) {
             Log.d("Firebase", "Error querying offers: ", e)
         }
@@ -76,7 +71,7 @@ class OfferViewModel : ViewModel() {
     }
 
     suspend fun fetchBuyerOfferProducts(): List<Offers> {
-        Log.d("TESTING2345", "HERE BRO")
+
         val db = FirebaseFirestore.getInstance()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid
         val offersList = mutableListOf<Offers>()
@@ -98,14 +93,12 @@ class OfferViewModel : ViewModel() {
                 val imageURL = document.getString("imageURL") ?: ""
                 val status = document.getString("status") ?: ""
 
-
                 val offer = Offers(offerID, productID, productName, sellerID, buyerID, buyerName, offerPrice, imageURL, status)
                 offersList.add(offer)
 
 
             }
 
-            Log.d("TESTING234", "HERE BRO")
         } catch (e: FirebaseFirestoreException) {
             Log.d("Firebase", "Error querying offers: ", e)
         }
@@ -114,11 +107,9 @@ class OfferViewModel : ViewModel() {
     }
 
     fun acceptOffer(offerID: String) {
-        Log.d("HAHAAO", offerID)
         val db = FirebaseFirestore.getInstance()
         db.collection("Offers").document(offerID.trim())
             .update("status", "Accept")
-        Log.d("HAHAAOO", "NO")
     }
 
     fun denyOffer(offerID: String) {

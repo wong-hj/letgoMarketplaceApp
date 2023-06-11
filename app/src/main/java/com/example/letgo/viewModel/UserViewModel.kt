@@ -104,7 +104,6 @@ class UserViewModel : ViewModel() {
     }
 
     suspend fun fetchReviews(): List<Reviews> {
-        Log.d("TESTING2345", "HERE BRO")
         val db = FirebaseFirestore.getInstance()
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid
         val reviewsList = mutableListOf<Reviews>()
@@ -130,8 +129,6 @@ class UserViewModel : ViewModel() {
 
 
             }
-
-            Log.d("TESTING234", "HERE BRO")
         } catch (e: FirebaseFirestoreException) {
             Log.d("Firebase", "Error querying offers: ", e)
         }

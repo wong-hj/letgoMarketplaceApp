@@ -218,7 +218,6 @@ class ProductDetailsViewModel: ViewModel() {
     }
 
     suspend fun fetchReviewsByProduct(productID: String?): List<Reviews> {
-        Log.d("TESTING2345", "HERE BRO")
         val db = FirebaseFirestore.getInstance()
         val reviewsList = mutableListOf<Reviews>()
 
@@ -244,7 +243,6 @@ class ProductDetailsViewModel: ViewModel() {
 
             }
 
-            Log.d("TESTING234", "HERE BRO")
         } catch (e: FirebaseFirestoreException) {
             Log.d("Firebase", "Error querying offers: ", e)
         }

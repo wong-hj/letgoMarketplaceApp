@@ -132,13 +132,8 @@ class ProductDetailsViewModel: ViewModel() {
             }.addOnFailureListener {
                 callback(false)
             }
-
-
     }
-
     fun unlikeProduct(productID: String, likes: Int, callback: (Boolean) -> Unit) {
-
-        Log.d("unlikeProduct", likes.toString())
 
         val db = FirebaseFirestore.getInstance()
 
@@ -152,7 +147,6 @@ class ProductDetailsViewModel: ViewModel() {
                     db.collection("Products").document(productID)
                         .update("likes", FieldValue.increment(-1))
                 }
-
                 callback(true)
 
             }.addOnFailureListener {

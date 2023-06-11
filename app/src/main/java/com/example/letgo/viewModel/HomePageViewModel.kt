@@ -16,14 +16,16 @@ import kotlinx.coroutines.tasks.await
 
 class HomePageViewModel : ViewModel() {
 
-    private val _products = MutableLiveData<List<Products>>()
-    val products: LiveData<List<Products>> = _products
+
 
     private val _isLoading = MutableStateFlow( false )
     val isLoading = _isLoading.asStateFlow()
 
     private val _searchProducts = MutableLiveData<List<Products>>()
     val searchProducts: LiveData<List<Products>> = _searchProducts
+
+    private val _products = MutableLiveData<List<Products>>()
+    val products: LiveData<List<Products>> = _products
 
     init {
         getProductData()
@@ -32,7 +34,9 @@ class HomePageViewModel : ViewModel() {
      fun getProductData() {
         viewModelScope.launch {
             _isLoading.value = true
+
             _products.value = getAllProductsList()
+
             _isLoading.value = false
         }
     }
@@ -40,14 +44,16 @@ class HomePageViewModel : ViewModel() {
     suspend fun getAllProductsList(): List<Products> {
         val db = FirebaseFirestore.getInstance()
 
-        try {
+        return try {
             val querySnapshot = db.collection("Products").get().await()
 
-            return querySnapshot.toObjects<Products>()
+            querySnapshot.toObjects()
+
         } catch (e: FirebaseFirestoreException) {
+
             Log.d("Firebase", "Error getting documents: ", e)
 
-            return emptyList()
+            emptyList()
         }
     }
 

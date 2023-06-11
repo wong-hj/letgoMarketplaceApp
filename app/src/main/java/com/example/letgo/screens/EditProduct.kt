@@ -150,7 +150,7 @@ fun EditProduct(navController: NavHostController, vm: EditProductViewModel = vie
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                         onClick = {
 
-                            product?.let { vm.deleteProduct(it.productID, it.productID) }
+                            product?.let { vm.deleteProduct(it.productID) }
                             openDialog.value = false
                             navController.navigateUp()
 

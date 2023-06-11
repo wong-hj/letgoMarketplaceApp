@@ -11,7 +11,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 class RegisterViewModel(): ViewModel() {
-
     suspend fun signUp(
         email: String,
         password: String,
@@ -26,11 +25,12 @@ class RegisterViewModel(): ViewModel() {
             Firebase.auth.createUserWithEmailAndPassword(email, password)
                 .await()
 
-            val uid = FirebaseAuth.getInstance().currentUser?.uid;
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
 
             val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
             val dbUsers: DocumentReference = db.collection("Users").document(uid ?: "")
+
 
             val userDetails = Users(uid ?: "", name,email,university,studentID, emptyList(), contact)
 

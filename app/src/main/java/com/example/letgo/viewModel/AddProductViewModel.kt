@@ -31,7 +31,7 @@ class AddProductViewModel : ViewModel() {
                 db.collection("Products").document(documentReference.id)
                     .update("productID", documentReference.id)
                 Log.d("SuccessAdd", "Product added with ID: ${documentReference.id}")
-                
+
                 if(image != null) {
                     val storage = FirebaseStorage.getInstance()
                     val storageRef = storage.reference.child("images/${documentReference.id}.jpg")

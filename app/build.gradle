@@ -56,9 +56,13 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.2.0'
+
+    //Material Design 3
     implementation "androidx.compose.material3:material3:1.1.0"
-    //coil async image library
+
+    //Coil async image library
     implementation "io.coil-kt:coil-compose:2.4.0"
+
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
 
     // Navigation

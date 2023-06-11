@@ -31,11 +31,11 @@ class EditProductViewModel : ViewModel() {
             _product.value = fetchProduct(documentID)
         }
     }
-    fun deleteProduct(documentID: String, productID: String) {
+    fun deleteProduct(documentID: String) {
 
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val imageRef = storageRef.child("images/$productID.jpg") // Replace with your image URL or path
+        val imageRef = storageRef.child("images/$documentID.jpg")
 
         imageRef.delete()
             .addOnSuccessListener {
@@ -46,7 +46,7 @@ class EditProductViewModel : ViewModel() {
                     .addOnSuccessListener {
                         // Delete successful, perform any additional actions if needed
                         db.collection("Offers")
-                            .whereEqualTo("productID", productID)
+                            .whereEqualTo("productID", documentID)
                             .get()
                             .addOnSuccessListener { querySnapshot ->
                                 for (document in querySnapshot.documents) {
@@ -65,7 +65,7 @@ class EditProductViewModel : ViewModel() {
                             }
 
                         db.collection("Reviews")
-                            .whereEqualTo("productID", productID)
+                            .whereEqualTo("productID", documentID)
                             .get()
                             .addOnSuccessListener { querySnapshot ->
                                 for (document in querySnapshot.documents) {
@@ -91,7 +91,7 @@ class EditProductViewModel : ViewModel() {
                             for (userDoc in querySnapshot.documents) {
                                 // Remove the product ID from the likedProducts array field
                                 val userRef = usersCollectionRef.document(userDoc.id)
-                                batch.update(userRef, "likedProducts", FieldValue.arrayRemove(productID))
+                                batch.update(userRef, "likedProducts", FieldValue.arrayRemove(documentID))
                             }
 
                             batch.commit()
@@ -109,12 +109,10 @@ class EditProductViewModel : ViewModel() {
                     }
                     .addOnFailureListener { e ->
                         // An error occurred while deleting the document
-                        // Handle the error appropriately, for example, show an error message
                     }
             }
             .addOnFailureListener { e ->
                 // An error occurred while deleting the image
-                // Handle the error appropriately
             }
 
     }

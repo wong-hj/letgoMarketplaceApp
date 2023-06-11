@@ -262,7 +262,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                 if (results != null) {
 
                     if (results.isNotEmpty()) {
-
                         val location = results[0]
                         val latitude = location.latitude
                         val longitude = location.longitude
@@ -288,8 +287,13 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                                 title = "Location"
                             )
                         }
+                    } else {
+
+                        Text("The location is not valid.", style = Typography.subtitle1)
 
                     }
+
+
                 } else {
 
                     Text("The location is not valid.", style = Typography.subtitle1)
@@ -571,7 +575,6 @@ fun ProductDetails(navController: NavHostController, vm: ProductDetailsViewModel
                                 }
                             }
                         }
-
 
                         if (!productDefaultLiked) {
                             // Like
